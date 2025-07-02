@@ -1,0 +1,148 @@
+/* --- Estilos para la página de Detalle de Producto --- */
+
+.product-detail-container {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: calc(100vh - 155px);
+  background-color: #f0f2f5;
+}
+
+.product-detail-card {
+  max-width: 900px;
+  width: 100%;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.product-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.product-image-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.product-detail-image {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 8px;
+  mix-blend-mode: multiply;
+}
+
+.product-info-section {
+  flex: 2;
+  padding: 10px;
+}
+
+.product-detail-title {
+  font-size: 2.2em;
+  font-weight: bold;
+  color: #3f51b5;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.product-detail-author,
+.product-detail-category,
+.product-detail-isbn,
+.product-detail-price,
+.product-detail-stock {
+  font-size: 1.1em;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.product-detail-price {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: #2e7d32;
+}
+
+.product-detail-stock.low-stock {
+  color: orange;
+  font-weight: bold;
+}
+
+.product-detail-stock.no-stock {
+  color: red;
+  font-weight: bold;
+}
+
+.product-detail-sinopsis-section {
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+}
+
+.product-detail-sinopsis-section h3 {
+  font-size: 1.3em;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.product-detail-sinopsis {
+  font-size: 1em;
+  line-height: 1.6;
+  color: #444;
+  text-align: justify;
+}
+
+.product-detail-actions {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start;
+  padding: 0;
+}
+
+.product-detail-actions button {
+  min-width: 150px;
+}
+
+.loading-spinner, .error-message, .no-content {
+  text-align: center;
+  padding: 50px;
+  color: #555;
+  width: 100%;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+}
+
+/* --- Diseño Responsivo --- */
+@media (min-width: 768px) {
+  .product-detail-card {
+    padding: 30px;
+  }
+  .product-content {
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 599px) {
+  .product-detail-title {
+    font-size: 1.8em;
+  }
+  .product-detail-actions {
+    justify-content: center;
+  }
+  .product-detail-actions button {
+    width: 100%;
+  }
+}

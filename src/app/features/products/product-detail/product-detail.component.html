@@ -1,0 +1,55 @@
+<!-- Contenedor Principal de la Página de Detalle -->
+<div class="product-detail-container">
+  <!-- Estado de Carga -->
+  <div *ngIf="loading" class="loading-spinner">
+    <mat-spinner></mat-spinner>
+    <p>Cargando detalles del libro...</p>
+  </div>
+
+  <!-- Mensaje de Error -->
+  <div *ngIf="errorMessage && !loading" class="error-message">
+    <p>{{ errorMessage }}</p>
+    <button mat-raised-button color="warn" routerLink="/">Volver a la lista</button>
+  </div>
+
+  <!-- Tarjeta con los Detalles del Producto -->
+  <mat-card *ngIf="product$ | async as product; else noProduct" class="product-detail-card">
+    <div class="product-content">
+      <div class="product-image-section">
+        <img [src]="product.imagenUrl || 'https://placehold.co/400x600/E0E0E0/212121?text=Sin+Portada'"
+             alt="Portada de {{ product.titulo }}" class="product-detail-image">
+      </div>
+      <div class="product-info-section">
+        <h2 class="product-detail-title">{{ product.titulo }}</h2>
+        <p class="product-detail-author"><strong>Autor:</strong> {{ product.autor }}</p>
+        <p class="product-detail-category"><strong>Categoría:</strong> {{ product.categoria.nombre }}</p>
+        <p class="product-detail-isbn"><strong>ISBN:</strong> {{ product.isbn }}</p>
+        <p class="product-detail-price"><strong>Precio:</strong> {{ product.precio | currency:'S/.':'symbol':'1.2-2' }}</p>
+        <p class="product-detail-stock" [ngClass]="{'low-stock': product.stock <= 5 && product.stock > 0, 'no-stock': product.stock === 0}">
+          <strong>Stock:</strong> {{ product.stock === 0 ? 'Agotado' : product.stock }}
+        </p>
+
+        <div class="product-detail-sinopsis-section">
+          <h3>Sinopsis:</h3>
+          <p class="product-detail-sinopsis">{{ product.sinopsis }}</p>
+        </div>
+
+        <mat-card-actions class="product-detail-actions">
+          <button mat-raised-button color="primary" [disabled]="product.stock === 0" (click)="addToCart(product)">
+            <mat-icon>add_shopping_cart</mat-icon> Añadir al Carrito
+          </button>
+          <button mat-button routerLink="/">
+            <mat-icon>arrow_back</mat-icon> Volver a la Lista
+          </button>
+        </mat-card-actions>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Plantilla si el producto no existe -->
+  <ng-template #noProduct>
+    <div *ngIf="!loading && !errorMessage" class="no-content">
+      <p>No se pudo cargar el libro.</p>
+    </div>
+  </ng-template>
+</div>

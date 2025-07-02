@@ -1,0 +1,59 @@
+<div class="register-container">
+  <mat-card class="register-card">
+    <mat-card-title>Registrarse</mat-card-title>
+    <mat-card-content>
+      <form (ngSubmit)="onRegister()">
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Nombres</mat-label>
+          <input matInput type="text" [(ngModel)]="nombres" name="nombres" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Apellidos</mat-label>
+          <input matInput type="text" [(ngModel)]="apellidos" name="apellidos" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Tipo de Documento</mat-label>
+          <mat-select [(ngModel)]="tipoDocumento" name="tipoDocumento" required>
+            <mat-option value="DNI">DNI</mat-option>
+            <mat-option value="RUC">RUC</mat-option>
+            <mat-option value="CE">Carné de Extranjería (CE)</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Número Documento</mat-label>
+          <input matInput type="text" [(ngModel)]="numeroDocumento" name="numeroDocumento" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Teléfono</mat-label>
+          <input matInput type="text" [(ngModel)]="telefono" name="telefono" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Fecha de Nacimiento</mat-label>
+          <input matInput type="date" [(ngModel)]="fechaNacimiento" name="fechaNacimiento" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" [(ngModel)]="email" name="email" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Contraseña</mat-label>
+          <input matInput type="password" [(ngModel)]="password" name="password" required>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" class="full-width">Registrarme</button>
+      </form>
+      <p class="login-link">¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión aquí</a></p>
+
+      <!-- Mensajes de estado -->
+      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+    </mat-card-content>
+  </mat-card>
+</div>

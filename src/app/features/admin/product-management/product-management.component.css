@@ -1,0 +1,127 @@
+.product-management-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.management-header {
+  font-size: 2.2em;
+  font-weight: bold;
+  color: #002e86;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.botonAñadir{
+  color: black;
+}
+
+.actions-filter-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap; /* Permite que los elementos salten de línea en pantallas pequeñas */
+  gap: 15px; /* Espacio entre los elementos */
+}
+
+.filter-field {
+  width: 300px; /* Ancho fijo para el campo de búsqueda */
+  flex-grow: 1; /* Permite que el campo crezca si hay espacio */
+  max-width: 100%;
+}
+
+.actions-filter-section button {
+  white-space: nowrap; /* Evita que el texto del botón se rompa */
+}
+
+/* Estilos para el formulario de agregar/editar */
+.product-form-card {
+  margin-bottom: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 12px;
+}
+
+.product-form-card mat-card-title {
+  text-align: center;
+  font-size: 1.8em;
+  margin-bottom: 20px;
+  color: #002e86;
+}
+
+.product-form-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Estilos para la tabla */
+.mat-elevation-z8 {
+  width: 100%;
+  overflow-x: auto; /* Permite el scroll horizontal en la tabla para pantallas pequeñas */
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+}
+
+th.mat-header-cell, td.mat-cell {
+  padding: 10px;
+  white-space: nowrap; /* Evita que el texto de las celdas se rompa */
+}
+
+.mat-column-id {
+  width: 50px;
+  text-align: center;
+}
+
+.mat-column-precio, .mat-column-stock {
+  text-align: right;
+  padding-right: 20px;
+}
+
+.mat-column-acciones {
+  width: 120px;
+  text-align: center;
+}
+
+/* Estilos de carga y error */
+.loading-spinner, .error-message {
+  text-align: center;
+  padding: 50px;
+  color: #666;
+}
+
+.error-message mat-icon {
+  font-size: 50px;
+  height: 50px;
+  width: 50px;
+  margin-bottom: 15px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .actions-filter-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filter-field {
+    width: 100%;
+  }
+  .actions-filter-section button {
+    width: 100%;
+  }
+}

@@ -1,0 +1,117 @@
+.category-management-container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.management-header {
+  font-size: 2.2em;
+  font-weight: bold;
+  color: #002e86;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.actions-filter-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.filter-field {
+  width: 300px;
+  flex-grow: 1;
+  max-width: 100%;
+}
+
+.actions-filter-section button {
+  white-space: nowrap;
+}
+
+.category-form-card {
+  margin-bottom: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 12px;
+}
+
+.category-form-card mat-card-title {
+  text-align: center;
+  font-size: 1.8em;
+  margin-bottom: 20px;
+  color: #002e86;
+}
+
+.category-form-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Estilos para la tabla */
+.mat-elevation-z8 {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+}
+
+th.mat-header-cell, td.mat-cell {
+  padding: 10px;
+  white-space: nowrap;
+}
+
+.mat-column-id {
+  width: 50px;
+  text-align: center;
+}
+
+.mat-column-acciones {
+  width: 120px;
+  text-align: center;
+}
+
+/* Estilos de carga y error */
+.loading-spinner, .error-message {
+  text-align: center;
+  padding: 50px;
+  color: black;
+}
+
+.error-message mat-icon {
+  font-size: 50px;
+  height: 50px;
+  width: 50px;
+  margin-bottom: 15px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .actions-filter-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filter-field {
+    width: 100%;
+  }
+  .actions-filter-section button {
+    width: 100%;
+  }
+}

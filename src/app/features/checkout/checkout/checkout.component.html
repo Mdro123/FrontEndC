@@ -1,0 +1,102 @@
+<div class="checkout-page-wrapper font-inter">
+  <div class="checkout-card">
+
+    <!-- Sección de Resumen del Pedido -->
+    <div class="order-summary-panel">
+      <h2 class="order-summary-title">Resumen del Pedido</h2>
+      <div class="order-items-scroll custom-scrollbar">
+        <ul *ngIf="cartItems.length > 0; else emptyCart" class="order-items-list">
+          <li *ngFor="let item of cartItems" class="order-item">
+            <img [src]="item.imagenUrl || 'https://placehold.co/80x80/E0E7FF/4338CA?text=Producto'"
+                 alt="{{ item.titulo }}"
+                 class="order-item-image">
+            <div class="order-item-details">
+              <p class="order-item-title">{{ item.titulo }}</p>
+              <p class="order-item-quantity">Cantidad: {{ item.quantity }}</p>
+            </div>
+            <p class="order-item-price">{{ item.precio * item.quantity | currency:'S/':'symbol':'1.2-2' }}</p>
+          </li>
+        </ul>
+        <ng-template #emptyCart>
+          <div class="empty-cart-message">
+            <mat-icon class="empty-cart-icon">shopping_cart</mat-icon>
+            <p class="empty-cart-text">Tu carrito está vacío.</p>
+            <p class="empty-cart-subtext">Añade productos para proceder al pago.</p>
+          </div>
+        </ng-template>
+      </div>
+      <div class="order-summary-footer">
+        <div class="order-subtotal">
+          <span>Subtotal:</span>
+          <span>{{ cartSubtotal | currency:'S/':'symbol':'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección de Formulario de Pago -->
+    <div class="payment-info-panel">
+      <h2 class="payment-info-title">Información de Pago</h2>
+
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner color="primary" [diameter]="50"></mat-spinner>
+        <p class="loading-text">Cargando formulario de pago...</p>
+      </div>
+
+      <form (ngSubmit)="handlePayment()" class="payment-form" *ngIf="!loading && !paymentSuccess">
+        <mat-form-field appearance="outline" class="full-width-field">
+          <mat-label>Nombre Completo</mat-label>
+          <input matInput [(ngModel)]="fullName" name="fullName" required placeholder="Ej: Juan Pérez">
+          <mat-icon matSuffix class="input-icon">person</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width-field">
+          <mat-label>Dirección Línea 1</mat-label>
+          <input matInput [(ngModel)]="addressLine1" name="addressLine1" required placeholder="Ej: Av. Principal 123">
+          <mat-icon matSuffix class="input-icon">location_on</mat-icon>
+        </mat-form-field>
+
+        <div class="grid-2-cols">
+            <mat-form-field appearance="outline" class="full-width-field">
+                <mat-label>Ciudad</mat-label>
+                <input matInput [(ngModel)]="city" name="city" required placeholder="Ej: Lima">
+                <mat-icon matSuffix class="input-icon">location_city</mat-icon>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width-field">
+                <mat-label>Código Postal</mat-label>
+                <input matInput [(ngModel)]="zipCode" name="zipCode" required placeholder="Ej: Lima 01">
+                <mat-icon matSuffix class="input-icon">local_post_office</mat-icon>
+            </mat-form-field>
+        </div>
+
+        <input type="hidden" [(ngModel)]="country" name="country">
+
+        <div class="stripe-card-container">
+          <label for="card-element" class="card-label">Información de la tarjeta</label>
+          <div id="card-element" #cardElement class="stripe-element-style"></div>
+          <div *ngIf="paymentError && !paymentSuccess" class="payment-error-message">{{ paymentError }}</div>
+        </div>
+
+        <button mat-raised-button color="primary" type="submit" class="pay-button" [disabled]="processing || paymentSuccess || cartItems.length === 0">
+          <span *ngIf="!processing">Pagar {{ cartSubtotal | currency:'S/':'symbol':'1.2-2' }}</span>
+          <mat-spinner *ngIf="processing" [diameter]="24" class="button-spinner"></mat-spinner>
+          <span *ngIf="processing">Procesando...</span>
+        </button>
+      </form>
+
+      <div *ngIf="paymentSuccess" class="payment-success-section">
+        <mat-icon class="success-icon">check_circle_outline</mat-icon>
+        <h3 class="success-title">¡Pago Exitoso!</h3>
+        <p class="success-message">Tu pedido ha sido procesado correctamente.</p>
+        <button mat-raised-button color="accent" routerLink="/" class="continue-shopping-button">
+          Continuar Comprando
+        </button>
+      </div>
+
+      <div *ngIf="!loading && cartItems.length === 0 && !paymentSuccess" class="back-to-cart-container">
+        <button mat-button color="accent" routerLink="/carrito" class="back-to-cart-button">
+          <mat-icon>arrow_back</mat-icon> Volver al Carrito
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

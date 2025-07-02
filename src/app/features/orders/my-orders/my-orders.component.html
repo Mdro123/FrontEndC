@@ -1,0 +1,78 @@
+<!-- Contenedor Principal de la Página de Pedidos -->
+<div class="orders-container">
+  <mat-card class="orders-card">
+    <mat-card-title>Mi Historial de Pedidos</mat-card-title>
+    <mat-card-content>
+
+      <!-- Estado de Carga -->
+      <div *ngIf="isLoading" class="loading-spinner">
+        <mat-spinner></mat-spinner>
+        <p>Cargando tus pedidos...</p>
+      </div>
+
+      <!-- Mensaje de Error -->
+      <div *ngIf="errorMessage && !isLoading" class="error-message">
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <p>{{ errorMessage }}</p>
+        <button mat-raised-button color="warn" (click)="loadUserOrders()">Reintentar</button>
+      </div>
+
+      <!-- Contenido Principal (cuando hay datos) -->
+      <ng-container *ngIf="orders$ | async as orders">
+        <!-- Mensaje si no hay pedidos -->
+        <div *ngIf="orders.length === 0 && !isLoading && !errorMessage" class="empty-orders-message">
+          <mat-icon class="empty-icon">receipt</mat-icon>
+          <p>Aún no tienes pedidos.</p>
+          <p>¡Es un buen momento para explorar nuestra librería!</p>
+          <button mat-raised-button color="primary" routerLink="/productos">
+            <mat-icon>store</mat-icon> Explorar Libros
+          </button>
+        </div>
+
+        <!-- Lista de Pedidos -->
+        <div *ngIf="orders.length > 0 && !isLoading" class="order-list">
+          <mat-expansion-panel *ngFor="let order of orders; let i = index" class="order-panel">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Pedido #{{ i + 1 }} -
+                <span [ngClass]="{
+                  'status-success': order.estado === 'procesado' || order.estado === 'enviado' || order.estado === 'entregado',
+                  'status-pending': order.estado === 'pendiente',
+                  'status-failed': order.estado === 'pago_fallido' || order.estado.includes('cancelado')
+                }">
+                  {{ getEstadoLegible(order.estado) }}
+                </span>
+              </mat-panel-title>
+              <mat-panel-description>
+                {{ order.fecha | date:'dd/MM/yyyy HH:mm' }} - Total: {{ order.total | currency:'S/.':'symbol':'1.2-2' }}
+                <mat-icon class="header-icon">chevron_right</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <!-- Contenido Detallado del Pedido -->
+            <div class="order-details-content">
+              <p><strong>Método de Pago:</strong> {{ order.metodoPagoNombre }}</p>
+              <p><strong>Fecha de Pedido:</strong> {{ order.fecha | date:'fullDate' }}</p>
+              <p><strong>Última Actualización:</strong> {{ order.updatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+              <mat-divider></mat-divider>
+              <h4>Detalles de los Productos:</h4>
+              <div class="product-item" *ngFor="let item of order.detalles">
+                <img [src]="item.imagenProductoUrl || 'https://placehold.co/80x120/E0E0E0/212121?text=Producto'" alt="{{ item.tituloProducto }}" class="product-image">
+                <div class="item-info">
+                  <p><strong>{{ item.tituloProducto }}</strong></p>
+                  <p>Cantidad: {{ item.cantidad }}</p>
+                  <p>Precio Unitario: {{ item.precioUnitario | currency:'S/.':'symbol':'1.2-2' }}</p>
+                  <p>Subtotal: {{ item.subtotal | currency:'S/.':'symbol':'1.2-2' }}</p>
+                </div>
+              </div>
+              <mat-divider></mat-divider>
+              <div class="order-summary-footer">
+                <p><strong>Total del Pedido:</strong> {{ order.total | currency:'S/.':'symbol':'1.2-2' }}</p>
+              </div>
+            </div>
+          </mat-expansion-panel>
+        </div>
+      </ng-container>
+    </mat-card-content>
+  </mat-card>
+</div>

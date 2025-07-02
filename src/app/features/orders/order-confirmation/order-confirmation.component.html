@@ -1,0 +1,18 @@
+<!-- Contenedor principal de la página de confirmación -->
+<div class="confirmation-container">
+  <mat-card class="confirmation-card">
+    <mat-icon class="check-icon">check_circle_outline</mat-icon>
+    <mat-card-title>¡Gracias por tu compra!</mat-card-title>
+    <mat-card-content>
+      <p class="message">Tu pedido ha sido procesado exitosamente y está en camino.</p>
+      <div class="actions">
+        <button mat-raised-button color="primary" routerLink="/">
+          <mat-icon>home</mat-icon> Volver a la Tienda
+        </button>
+        <button mat-button routerLink="/mis-pedidos">
+          <mat-icon>receipt</mat-icon> Ver Mis Pedidos
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

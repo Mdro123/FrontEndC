@@ -1,1 +1,44 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Roboto', "Helvetica Neue", sans-serif;
+
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.full-width {
+  width: 100%;
+}
+.mat-mdc-card {
+  margin-top: 20px;
+}
+.mat-mdc-card-title {
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+.mat-mdc-button.mat-mdc-button-base {
+  margin-top: 10px;
+}
+.mat-mdc-button.full-width {
+  display: block;
+}
+
+.snackbar-success {
+  background-color: #4CAF50 !important; /* Verde */
+  color: white !important;
+}
+
+.snackbar-error {
+  background-color: #F44336 !important; /* Rojo */
+  color: white !important;
+}
+
+.snackbar-warn {
+  background-color: #FFC107 !important; /* Amarillo/Naranja */
+  color: rgba(0, 0, 0, 0.87) !important; /* Texto oscuro para contraste */
+}

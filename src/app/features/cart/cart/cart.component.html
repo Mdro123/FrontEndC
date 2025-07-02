@@ -1,0 +1,59 @@
+<div class="cart-container">
+  <h2>Tu Carrito de Compras</h2>
+
+  <ng-container *ngIf="cartItems$ | async as cartItems">
+    <!-- Mensaje para Carrito Vacío -->
+    <div *ngIf="cartItems.length === 0" class="empty-cart-message">
+      <mat-icon>shopping_cart</mat-icon>
+      <p>Tu carrito está vacío.</p>
+      <button mat-raised-button color="primary" routerLink="/">Explorar Libros</button>
+    </div>
+
+    <!-- Contenido del Carrito (Lista y Resumen) -->
+    <div *ngIf="cartItems.length > 0" class="cart-content">
+
+      <!-- Lista de Productos en el Carrito -->
+      <div class="cart-items-list">
+        <mat-card class="cart-item-card" *ngFor="let item of cartItems">
+          <img [src]="item.imagenUrl || 'https://placehold.co/100x150/E0E0E0/212121?text=Sin+Portada'" alt="Portada de {{ item.titulo }}" class="cart-item-image">
+
+          <div class="cart-item-details">
+            <h3>{{ item.titulo }}</h3>
+            <p><strong>Autor:</strong> {{ item.autor }}</p>
+            <p><strong>Precio unitario:</strong> {{ item.precio | currency:'S/.':'symbol':'1.2-2' }}</p>
+
+            <div class="cart-item-quantity-control">
+              <mat-form-field appearance="outline" class="quantity-input">
+                <mat-label>Cantidad</mat-label>
+                <input matInput type="number" [value]="item.quantity" min="1" [max]="item.stock" (change)="updateQuantity(item, $event)">
+              </mat-form-field>
+              <button mat-icon-button color="warn" (click)="removeItem(item.id)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+
+            <p class="cart-item-total">
+              <strong>Subtotal:</strong> {{ item.precio * item.quantity | currency:'S/.':'symbol':'1.2-2' }}
+            </p>
+          </div>
+        </mat-card>
+      </div>
+
+      <!-- Resumen del Carrito -->
+      <mat-card class="cart-summary-card">
+        <h3>Resumen del Carrito</h3>
+        <p>Total de ítems: <span>{{ (cartItemCount$ | async) || 0 }}</span></p>
+        <p class="cart-subtotal">Subtotal: <span>{{ (cartSubtotal$ | async) || 0 | currency:'S/.':'symbol':'1.2-2' }}</span></p>
+
+        <div class="cart-summary-actions">
+          <button mat-raised-button color="primary" (click)="proceedToCheckout()">
+            <mat-icon>payment</mat-icon> Proceder a la Compra
+          </button>
+          <button mat-button color="warn" (click)="confirmClearCart()">
+            <mat-icon>remove_shopping_cart</mat-icon> Vaciar Carrito
+          </button>
+        </div>
+      </mat-card>
+    </div>
+  </ng-container>
+</div>

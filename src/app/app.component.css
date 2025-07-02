@@ -1,0 +1,142 @@
+/* --- Estilos para el Layout Principal y Sticky Footer --- */
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #fcfcfc;
+}
+
+/* --- Topline --- */
+.topline {
+  background-color: #ffffff;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 32px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.topline-link {
+  color: black;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.topline-link:hover { color: #089949; }
+
+/* --- Barra de Navegación Principal --- */
+.app-navbar {
+  background-color: #ffbf02 !important;
+  color: black;
+  height: 70px;
+  padding: 0 32px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  font-family: 'Roboto', sans-serif;
+  top: 0;
+  z-index: 1001;
+}
+
+.navbar-center-spacer-left, .navbar-center-spacer-right {
+  flex-grow: 1;
+}
+
+.navbar-brand-button {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.navbar-logo-image {
+  height: 45px;
+  width: auto;
+}
+
+.navbar-right-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* --- Estilos para Botones Verticales --- */
+.navbar-nav-button.icon-button {
+  height: auto;
+  padding: 6px 8px;
+  background-color: transparent;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+  min-width: 80px;
+  text-align: center;
+}
+.navbar-nav-button.icon-button:hover {
+  background-color: transparent;
+}
+.navbar-nav-button.icon-button .navbar-nav-icon {
+  display: block;
+  font-size: 26px;
+  color: black;
+  margin: 0 auto 2px;
+}
+.navbar-nav-button.icon-button .icon-button-text {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: black;
+  line-height: 1.2;
+  width: 90px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* --- Otros Estilos --- */
+.cart-button {
+  padding-left: 20px;
+  height: 40px;
+  border-left: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 0;
+}
+
+.user-menu-container {
+  position: relative;
+}
+
+.app-menu-panel { background-color: #ffffff; border: 1px solid #e0e0e0; box-shadow: 0 6px 12px rgba(0,0,0,0.15); border-radius: 4px; margin-top: 8px; min-width: 180px; }
+.app-menu-item { color: #333333; font-size: 0.95rem; padding: 12px 20px; }
+.app-menu-item:hover { background-color: #e6f3ff; color: #0056b3; }
+.app-menu-item-icon { margin-right: 10px; font-size: 18px; color: #666666; }
+.app-menu-item:hover .app-menu-item-icon { color: #0056b3; }
+
+.main-content {
+  padding-top: 20px;
+  flex-grow: 1;
+}
+
+.app-footer { background-color: #2b2b2b; color: #dddddd; padding: 30px 20px; text-align: center; font-size: 0.9em; }
+.footer-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
+.footer-social-icons { display: flex; gap: 15px; }
+.social-icon { color: #dddddd; font-size: 1.5rem; }
+.social-icon:hover { color: #0056b3; }
+
+/* --- Media Queries --- */
+@media (max-width: 992px) {
+  .app-navbar { padding: 0 16px; height: 60px; }
+  .navbar-logo-image { height: 35px; }
+}
+@media (max-width: 576px) {
+  .app-navbar { height: auto; padding-bottom: 10px; flex-wrap: wrap; }
+}

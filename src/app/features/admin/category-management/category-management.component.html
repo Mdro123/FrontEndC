@@ -1,0 +1,97 @@
+<div class="category-management-container">
+  <h1 class="management-header">Gestión de Categorías</h1>
+
+  <div class="actions-filter-section">
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Filtrar categorías</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por nombre..." #input>
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="openAddForm()">
+      <mat-icon>add</mat-icon> Añadir Nueva Categoría
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-spinner">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando categorías...</p>
+  </div>
+  <div *ngIf="errorMessage && !isLoading" class="error-message">
+    <mat-icon color="warn">error_outline</mat-icon>
+    <p>{{ errorMessage }}</p>
+    <button mat-raised-button color="warn" (click)="loadCategories()">Reintentar Carga</button>
+  </div>
+
+  <mat-card *ngIf="showForm" class="category-form-card">
+    <mat-card-title>{{ isEditing ? 'Editar Categoría' : 'Añadir Nueva Categoría' }}</mat-card-title>
+    <mat-card-content>
+      <form (ngSubmit)="saveCategory()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nombre de la Categoría</mat-label>
+          <input matInput [(ngModel)]="currentCategory.nombre" name="nombre" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput [(ngModel)]="currentCategory.descripcion" name="descripcion" rows="3"></textarea>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-raised-button color="primary" type="submit">Guardar</button>
+          <button mat-button type="button" (click)="cancelForm()">Cancelar</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div *ngIf="!isLoading && !errorMessage && !showForm" class="mat-elevation-z8">
+    <mat-table [dataSource]="dataSource" matSort>
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+        <td mat-cell *matCellDef="let element"> {{ element.id }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
+        <td mat-cell *matCellDef="let element"> {{ element.nombre }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="descripcion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Descripción </th>
+        <td mat-cell *matCellDef="let element"> {{ element.descripcion || 'Sin descripción' }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Creado el </th>
+        <td mat-cell *matCellDef="let element"> {{ element.createdAt | date:'short' }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="updatedAt">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Actualizado el </th>
+        <td mat-cell *matCellDef="let element"> {{ element.updatedAt | date:'short' }} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button color="primary" (click)="openEditForm(element)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteCategory(element.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="6">No se encontraron categorías que coincidan con "{{input.value}}"</td>
+      </tr>
+    </mat-table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<div class="admin-dashboard-container">
+  <mat-sidenav-container>
+    <mat-sidenav mode="side" opened>
+      <h2 class="sidenav-header-title">Panel de Administración</h2> <mat-divider></mat-divider>
+      <button mat-button class="sidenav-menu-item" routerLink="productos">
+        <i class="bi bi-book sidenav-icon"></i> <span class="sidenav-item-text">Gestión de Libros</span> </button>
+      <button mat-button class="sidenav-menu-item" routerLink="categorias">
+        <i class="bi bi-tags sidenav-icon"></i> <span class="sidenav-item-text">Gestión de Categorías</span>
+      </button>
+      <button mat-button class="sidenav-menu-item" routerLink="pedidos">
+        <i class="bi bi-receipt sidenav-icon"></i> <span class="sidenav-item-text">Gestión de Pedidos</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-button class="sidenav-menu-item" routerLink="/">
+        <i class="bi bi-house sidenav-icon"></i> <span class="sidenav-item-text">Volver a la Tienda</span>
+      </button>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+      <h1 class="admin-content-header">Bienvenido al Panel de Administración</h1>
+      <p class="admin-welcome-text">Selecciona una opción del menú lateral para comenzar a gestionar.</p> <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
