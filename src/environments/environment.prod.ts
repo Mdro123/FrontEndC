@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://libreriacrisolb.azurewebsites.net/api'
+  apiUrl: 'api-libreria-bwb6hbfhc7h4b7bm.canadacentral-01.azurewebsites.net'
 };
