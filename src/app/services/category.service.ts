@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Category, CategoryDTO } from '../models/category.model';
-import { environment } from '../../environments/environment'; // Ajusta la ruta si es necesario
+// --- RUTA DE IMPORTACIÓN CORREGIDA ---
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
