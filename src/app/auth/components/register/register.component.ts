@@ -1,3 +1,4 @@
+PRUEBA_DE_CAMBIO;
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 // --- ESTAS SON LAS IMPORTACIONES CLAVE ---
