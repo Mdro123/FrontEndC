@@ -7,13 +7,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 import { CategoryService } from '../../../services/category.service';
 import { Category, CategoryDTO } from '../../../models/category.model';
 
@@ -24,8 +23,7 @@ import { Category, CategoryDTO } from '../../../models/category.model';
     CommonModule, MatTableModule, MatPaginatorModule, MatSortModule,
     MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule,
     MatDialogModule, MatSnackBarModule, MatProgressSpinnerModule,
-    MatCardModule, ReactiveFormsModule, // <-- Añadido ReactiveFormsModule
-    DatePipe // Para formatear fechas
+    MatCardModule, ReactiveFormsModule, DatePipe
   ],
   templateUrl: './category-management.component.html',
   styleUrls: ['./category-management.component.css']
@@ -41,8 +39,7 @@ export class CategoryManagementComponent implements OnInit, AfterViewInit {
   isLoading: boolean = true;
   errorMessage: string | null = null;
   showForm: boolean = false;
-
-  // --- LÓGICA DEL FORMULARIO ---
+  
   categoryForm!: FormGroup;
   isEditing: boolean = false;
   editingCategoryId: number | null = null;
@@ -51,11 +48,10 @@ export class CategoryManagementComponent implements OnInit, AfterViewInit {
   constructor(
     private categoryService: CategoryService,
     private snackBar: MatSnackBar,
-    private fb: FormBuilder // Inyectar FormBuilder
+    private fb: FormBuilder
   ) { }
 
   ngOnInit(): void {
-    // Inicializamos el formulario con las validaciones
     this.categoryForm = this.fb.group({
       nombre: ['', [
         Validators.required,
@@ -119,6 +115,7 @@ export class CategoryManagementComponent implements OnInit, AfterViewInit {
     this.formErrorMessage = null;
   }
 
+  // --- MÉTODO CORREGIDO ---
   saveCategory(): void {
     this.formErrorMessage = null;
     if (this.categoryForm.invalid) {
@@ -130,8 +127,10 @@ export class CategoryManagementComponent implements OnInit, AfterViewInit {
     let saveObservable: Observable<Category>;
 
     if (this.isEditing && this.editingCategoryId) {
+      // Si estamos editando, llamamos a updateCategory
       saveObservable = this.categoryService.updateCategory(this.editingCategoryId, categoryData);
     } else {
+      // Si no, llamamos a createCategory
       saveObservable = this.categoryService.createCategory(categoryData);
     }
 
