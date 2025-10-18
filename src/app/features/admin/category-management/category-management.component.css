@@ -1,13 +1,13 @@
 .category-management-container {
   padding: 20px;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .management-header {
   font-size: 2.2em;
   font-weight: bold;
-  color: #002e86;
+  color: #3f51b5; /* Ajustado a un color primario común */
   margin-bottom: 25px;
   text-align: center;
 }
@@ -27,28 +27,10 @@
   max-width: 100%;
 }
 
-.actions-filter-section button {
-  white-space: nowrap;
-}
-
 .category-form-card {
   margin-bottom: 20px;
   padding: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  border-radius: 12px;
-}
-
-.category-form-card mat-card-title {
-  text-align: center;
-  font-size: 1.8em;
-  margin-bottom: 20px;
-  color: #002e86;
-}
-
-.category-form-card form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  border-radius: 8px;
 }
 
 .full-width {
@@ -59,10 +41,9 @@
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
-/* Estilos para la tabla */
 .mat-elevation-z8 {
   width: 100%;
   overflow-x: auto;
@@ -73,58 +54,33 @@ table {
   width: 100%;
 }
 
-th.mat-header-cell, td.mat-cell {
-  padding: 10px;
-  white-space: nowrap;
-}
-
-.mat-column-id {
-  width: 50px;
-  text-align: center;
-}
-
-.mat-column-acciones {
-  width: 120px;
-  text-align: center;
-}
-
-/* Estilos de carga y error */
-.loading-spinner, .error-message {
-  text-align: center;
-  padding: 50px;
-  color: black;
-}
-
-.error-message mat-icon {
-  font-size: 50px;
-  height: 50px;
-  width: 50px;
-  margin-bottom: 15px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .actions-filter-section {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .filter-field {
-    width: 100%;
-  }
-  .actions-filter-section button {
-    width: 100%;
-  }
-  /* Añade esto a tu archivo .css */
-.form-error-message {
-  color: #f44336; /* Rojo de Material Design */
-  font-size: 0.8em;
-  text-align: center;
-  margin-bottom: 10px;
-}
 .description-cell {
   max-width: 300px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.loading-spinner, .error-message {
+  text-align: center;
+  padding: 50px;
+  color: #666;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.form-error-message {
+  color: #f44336;
+  font-size: 0.8em;
+  text-align: center;
+  margin: 10px 0;
+}
+
+@media (max-width: 768px) {
+  .actions-filter-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
