@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// --- IMPORTACIONES CLAVE QUE FALTABAN ---
+// --- ESTAS SON LAS IMPORTACIONES CLAVE ---
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule, MatHint } from '@angular/material/form-field';
@@ -13,25 +13,21 @@ import { AuthService } from '../../../services/auth.service';
 // Validador personalizado para la fecha de nacimiento
 export function birthDateValidator(): (control: AbstractControl) => ValidationErrors | null {
   return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.value) {
-      return null;
-    }
+    if (!control.value) { return null; }
     const birthDate = new Date(control.value);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const userTimezoneOffset = birthDate.getTimezoneOffset() * 60000;
     const adjustedBirthDate = new Date(birthDate.getTime() + userTimezoneOffset);
-    if (adjustedBirthDate > today) {
-      return { futureDate: true };
-    }
+
+    if (adjustedBirthDate > today) { return { futureDate: true }; }
+
     let age = today.getFullYear() - adjustedBirthDate.getFullYear();
     const monthDiff = today.getMonth() - adjustedBirthDate.getMonth();
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < adjustedBirthDate.getDate())) {
       age--;
     }
-    if (age > 90) {
-      return { maxAgeExceeded: true };
-    }
+    if (age > 90) { return { maxAgeExceeded: true }; }
     return null;
   };
 }
@@ -41,7 +37,7 @@ export function birthDateValidator(): (control: AbstractControl) => ValidationEr
   standalone: true,
   imports: [
     CommonModule,
-    // --- IMPORTACIÓN CLAVE QUE FALTABA ---
+    // --- ESTA IMPORTACIÓN ES LA QUE CORRIGE EL ERROR DE 'formGroup' ---
     ReactiveFormsModule,
     MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, RouterLink, MatHint
   ],
@@ -49,7 +45,7 @@ export function birthDateValidator(): (control: AbstractControl) => ValidationEr
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit, OnDestroy {
-  // --- PROPIEDADES QUE FALTABAN ---
+  // --- ESTAS PROPIEDADES SON LAS QUE CORRIGEN LOS ERRORES DE 'Property does not exist' ---
   registerForm!: FormGroup;
   isUnderage: boolean = false;
   
