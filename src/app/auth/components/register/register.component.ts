@@ -37,12 +37,11 @@ export function birthDateValidator(): (control: AbstractControl) => ValidationEr
   standalone: true,
   imports: [
     CommonModule,
-    // --- ESTA IMPORTACIÓN ES LA QUE CORRIGE EL ERROR DE 'formGroup' ---
     ReactiveFormsModule,
     MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, RouterLink, MatHint
   ],
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  templateUrl: './register.component.html', // <-- Debe coincidir exactamente
+  styleUrls: ['./register.component.css']     // <-- Debe coincidir exactamente
 })
 export class RegisterComponent implements OnInit, OnDestroy {
   // --- ESTAS PROPIEDADES SON LAS QUE CORRIGEN LOS ERRORES DE 'Property does not exist' ---
