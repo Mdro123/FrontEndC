@@ -42,6 +42,7 @@
           <mat-error *ngIf="categoryForm.get('descripcion')?.hasError('required')">Campo obligatorio.</mat-error>
           <mat-error *ngIf="categoryForm.get('descripcion')?.hasError('minlength')">Debe tener al menos 10 caracteres.</mat-error>
           <mat-error *ngIf="categoryForm.get('descripcion')?.hasError('maxlength')">Máximo 255 caracteres.</mat-error>
+          <mat-error *ngIf="categoryForm.get('descripcion')?.hasError('pattern')">La descripción debe contener texto (no solo números o símbolos).</mat-error>
         </mat-form-field>
 
         <div *ngIf="formErrorMessage" class="form-error-message">
@@ -71,7 +72,7 @@
 
       <ng-container matColumnDef="descripcion">
         <th mat-header-cell *matHeaderCellDef>Descripción</th>
-        <td mat-cell *matCellDef="let row" class="description-cell">{{row.descripcion || '-'}}</td>
+        <td mat-cell *matCellDef="let row" class="description-cell" [matTooltip]="row.descripcion">{{row.descripcion || '-'}}</td>
       </ng-container>
 
       <ng-container matColumnDef="createdAt">
