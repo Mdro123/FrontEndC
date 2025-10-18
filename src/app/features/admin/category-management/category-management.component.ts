@@ -115,7 +115,6 @@ export class CategoryManagementComponent implements OnInit, AfterViewInit {
     this.formErrorMessage = null;
   }
 
-  // --- MÉTODO CORREGIDO ---
   saveCategory(): void {
     this.formErrorMessage = null;
     if (this.categoryForm.invalid) {
@@ -127,10 +126,8 @@ export class CategoryManagementComponent implements OnInit, AfterViewInit {
     let saveObservable: Observable<Category>;
 
     if (this.isEditing && this.editingCategoryId) {
-      // Si estamos editando, llamamos a updateCategory
       saveObservable = this.categoryService.updateCategory(this.editingCategoryId, categoryData);
     } else {
-      // Si no, llamamos a createCategory
       saveObservable = this.categoryService.createCategory(categoryData);
     }
 
