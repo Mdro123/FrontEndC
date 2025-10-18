@@ -114,4 +114,17 @@ th.mat-header-cell, td.mat-cell {
   .actions-filter-section button {
     width: 100%;
   }
+  /* Añade esto a tu archivo .css */
+.form-error-message {
+  color: #f44336; /* Rojo de Material Design */
+  font-size: 0.8em;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.description-cell {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 }
