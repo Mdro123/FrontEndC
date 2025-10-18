@@ -62,7 +62,8 @@ export class CategoryManagementComponent implements OnInit, AfterViewInit {
       descripcion: ['', [
         Validators.required,
         Validators.minLength(10),
-        Validators.maxLength(255)
+        Validators.maxLength(255),
+        Validators.pattern('.*[a-zA-ZáéíóúÁÉÍÓÚñÑ].*') // Valida que contenga al menos una letra
       ]]
     });
     this.loadCategories();
