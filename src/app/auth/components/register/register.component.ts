@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+// --- IMPORTACIONES CLAVE QUE FALTABAN ---
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule, MatHint } from '@angular/material/form-field';
@@ -13,24 +14,16 @@ import { AuthService } from '../../../services/auth.service';
 export function birthDateValidator(): (control: AbstractControl) => ValidationErrors | null {
   return (control: AbstractControl): ValidationErrors | null => {
     if (!control.value) {
-      return null; // No validar si está vacío (lo hace 'required')
+      return null;
     }
-
     const birthDate = new Date(control.value);
     const today = new Date();
-
     today.setHours(0, 0, 0, 0);
-
-    // Ajusta la fecha por la zona horaria para una comparación precisa
     const userTimezoneOffset = birthDate.getTimezoneOffset() * 60000;
     const adjustedBirthDate = new Date(birthDate.getTime() + userTimezoneOffset);
-
-    // Regla 1: No puede ser una fecha futura
     if (adjustedBirthDate > today) {
       return { futureDate: true };
     }
-
-    // Regla 2: La edad no puede ser mayor a 90 años
     let age = today.getFullYear() - adjustedBirthDate.getFullYear();
     const monthDiff = today.getMonth() - adjustedBirthDate.getMonth();
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < adjustedBirthDate.getDate())) {
@@ -39,8 +32,7 @@ export function birthDateValidator(): (control: AbstractControl) => ValidationEr
     if (age > 90) {
       return { maxAgeExceeded: true };
     }
-
-    return null; // Si todo está bien, retorna null
+    return null;
   };
 }
 
@@ -48,18 +40,21 @@ export function birthDateValidator(): (control: AbstractControl) => ValidationEr
   selector: 'app-register',
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule,
-    MatInputModule, MatButtonModule, RouterLink, MatHint
+    CommonModule,
+    // --- IMPORTACIÓN CLAVE QUE FALTABA ---
+    ReactiveFormsModule,
+    MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, RouterLink, MatHint
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit, OnDestroy {
+  // --- PROPIEDADES QUE FALTABAN ---
   registerForm!: FormGroup;
+  isUnderage: boolean = false;
+  
   errorMessage: string | null = null;
   successMessage: string | null = null;
-
-  isUnderage: boolean = false;
   private birthDateSubscription!: Subscription;
 
   constructor(
@@ -70,42 +65,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.registerForm = this.fb.group({
-      nombres: ['', [
-        Validators.required,
-        Validators.minLength(3),
-        Validators.maxLength(30),
-        Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$') // Sin espacios
-      ]],
-      apellidos: ['', [
-        Validators.required,
-        Validators.minLength(3),
-        Validators.maxLength(30),
-        Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$') // Con espacios
-      ]],
+      nombres: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$')]],
+      apellidos: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30), Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$')]],
       tipoDocumento: ['DNI', Validators.required],
-      numeroDocumento: ['', [
-        Validators.required,
-        Validators.minLength(8),
-        Validators.maxLength(8),
-        Validators.pattern('^\\d+$')
-      ]],
-      telefono: ['', [
-        Validators.required,
-        Validators.minLength(9),
-        Validators.maxLength(9),
-        Validators.pattern('^\\d+$')
-      ]],
+      numeroDocumento: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(8), Validators.pattern('^\\d+$')]],
+      telefono: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9), Validators.pattern('^\\d+$')]],
       fechaNacimiento: ['', [Validators.required, birthDateValidator()]],
-      email: ['', [
-        Validators.required,
-        Validators.maxLength(50),
-        Validators.email
-      ]],
-      password: ['', [
-        Validators.required,
-        Validators.minLength(6),
-        Validators.maxLength(20)
-      ]]
+      email: ['', [Validators.required, Validators.maxLength(50), Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]]
     });
 
     const birthDateControl = this.registerForm.get('fechaNacimiento');
@@ -137,11 +104,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.errorMessage = null;
     this.successMessage = null;
     this.registerForm.markAllAsTouched();
-
     if (this.registerForm.invalid) {
       return;
     }
-
     this.authService.register(this.registerForm.value).subscribe({
       next: (response) => {
         this.successMessage = '¡Registro exitoso! Serás redirigido para iniciar sesión.';
