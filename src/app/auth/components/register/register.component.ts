@@ -1,7 +1,5 @@
-PRUEBA_DE_CAMBIO;
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// --- ESTAS SON LAS IMPORTACIONES CLAVE ---
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule, MatHint } from '@angular/material/form-field';
@@ -11,7 +9,6 @@ import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 
-// Validador personalizado para la fecha de nacimiento
 export function birthDateValidator(): (control: AbstractControl) => ValidationErrors | null {
   return (control: AbstractControl): ValidationErrors | null => {
     if (!control.value) { return null; }
@@ -39,16 +36,19 @@ export function birthDateValidator(): (control: AbstractControl) => ValidationEr
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, RouterLink, MatHint
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    RouterLink,
+    MatHint
   ],
-  templateUrl: './register.component.html', // <-- Debe coincidir exactamente
-  styleUrls: ['./register.component.css']     // <-- Debe coincidir exactamente
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit, OnDestroy {
-  // --- ESTAS PROPIEDADES SON LAS QUE CORRIGEN LOS ERRORES DE 'Property does not exist' ---
   registerForm!: FormGroup;
   isUnderage: boolean = false;
-  
   errorMessage: string | null = null;
   successMessage: string | null = null;
   private birthDateSubscription!: Subscription;
