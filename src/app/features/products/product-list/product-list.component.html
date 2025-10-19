@@ -70,11 +70,12 @@
 </ng-container>
 
 <div class="page-content-wrapper">
+
+  <div class="section-title-container">
+    <h2 class="section-title">Nuestros Libros</h2>
+  </div>
   <ng-container *ngIf="!(products$ | async) && !errorMessage">
-    <div class="loading-spinner">
-      <mat-spinner></mat-spinner>
-      <p>Cargando libros...</p>
-    </div>
+    <div class="loading-spinner"><mat-spinner></mat-spinner><p>Cargando libros...</p></div>
   </ng-container>
 
   <div *ngIf="errorMessage" class="error-message">
