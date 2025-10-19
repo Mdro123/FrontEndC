@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common'; // CommonModule en lugar de DatePipe
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -7,12 +7,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatTooltipModule } from '@angular/material/tooltip'; // <-- 1. AÑADE ESTA LÍNEA
+import { MatTooltipModule } from '@angular/material/tooltip'; // Módulo para los tooltips
 import { Observable, of } from 'rxjs';
 import { CategoryService } from '../../../services/category.service';
 import { Category, CategoryDTO } from '../../../models/category.model';
@@ -23,16 +22,16 @@ import { Category, CategoryDTO } from '../../../models/category.model';
   imports: [
     CommonModule, MatTableModule, MatPaginatorModule, MatSortModule,
     MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule,
-    MatDialogModule, MatSnackBarModule, MatProgressSpinnerModule,
-    MatCardModule, ReactiveFormsModule, DatePipe,
-    MatTooltipModule // <-- 2. AÑADE ESTA LÍNEA
+    MatSnackBarModule, MatProgressSpinnerModule, MatCardModule, 
+    ReactiveFormsModule, MatTooltipModule // <-- Módulos necesarios
   ],
   templateUrl: './category-management.component.html',
   styleUrls: ['./category-management.component.css']
 })
 export class CategoryManagementComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['id', 'nombre', 'descripcion', 'createdAt', 'acciones'];
+  // --- Columna 'createdAt' eliminada para simplificar ---
+  displayedColumns: string[] = ['id', 'nombre', 'descripcion', 'acciones'];
   dataSource: MatTableDataSource<Category> = new MatTableDataSource<Category>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
