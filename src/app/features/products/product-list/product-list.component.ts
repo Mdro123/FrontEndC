@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe, UpperCasePipe } from '@angular/common';
 import { ProductService } from '../../../services/product.service';
-import { Product, ProductoMasVendidoDTO } from '../../../models/product.model';
+import { Product } from '../../../models/product.model';
 import { Observable, Subject, of } from 'rxjs';
-import { switchMap, debounceTime, distinctUntilChanged, catchError, take } from 'rxjs/operators';
+import { switchMap, debounceTime, distinctUntilChanged, catchError, tap } from 'rxjs/operators';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,7 +16,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { CartService } from '../../../services/cart.service';
 import { CategoryService } from '../../../services/category.service';
 import { Category } from '../../../models/category.model';
-import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar
 
 @Component({
   selector: 'app-product-list',
@@ -36,50 +35,46 @@ export class ProductListComponent implements OnInit {
   searchTerm: string = '';
   private searchSubject = new Subject<string>();
 
-  topSellingProducts$: Observable<ProductoMasVendidoDTO[]> | null = null;
+  listTitle: string = 'Nuestros Libros';
 
   constructor(
     private productService: ProductService,
     private activatedRoute: ActivatedRoute,
     private cartService: CartService,
     private categoryService: CategoryService,
-    private router: Router,
-    private snackBar: MatSnackBar // Inyecta MatSnackBar
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadCategories();
     this.setupProductLoading();
     this.setupSearch();
-    this.loadTopSellingProducts();
   }
 
   loadCategories(): void {
     this.categories$ = this.categoryService.getAllCategories().pipe(
-      catchError(error => {
-        console.error('Error al cargar categorías:', error);
-        return of([]);
-      })
+      catchError(error => of([]))
     );
   }
 
   setupProductLoading(): void {
-    this.activatedRoute.queryParamMap.pipe(
-      switchMap(queryParams => {
-        const searchTermFromQuery = queryParams.get('search');
-        if (searchTermFromQuery) {
-          this.searchTerm = searchTermFromQuery;
+    // Escucha tanto los parámetros de la ruta (/:categoryId) como los queryParams (?search=...)
+    this.activatedRoute.paramMap.pipe(
+      switchMap(params => {
+        const categoryId = params.get('categoryId');
+        const searchTermFromQuery = this.activatedRoute.snapshot.queryParamMap.get('search');
+
+        if (categoryId) {
+          const id = parseInt(categoryId, 10);
+          this.categoryService.getCategoryById(id).pipe(tap(cat => this.listTitle = cat.nombre)).subscribe();
+          return this.productService.getProductsByCategory(id);
+        } else if (searchTermFromQuery) {
+          this.listTitle = `Resultados para "${searchTermFromQuery}"`;
           return this.productService.searchProducts(searchTermFromQuery);
+        } else {
+          this.listTitle = 'Nuestros Libros';
+          return this.productService.getAllProducts();
         }
-        return this.activatedRoute.paramMap.pipe(
-          switchMap(params => {
-            const categoryId = params.get('categoryId');
-            if (categoryId) {
-              return this.productService.getProductsByCategory(parseInt(categoryId, 10));
-            }
-            return this.productService.getAllProducts();
-          })
-        );
       })
     ).subscribe(this.handleProductResponse());
   }
@@ -87,19 +82,13 @@ export class ProductListComponent implements OnInit {
   setupSearch(): void {
     this.searchSubject.pipe(
       debounceTime(300),
-      distinctUntilChanged(),
-      switchMap(term => {
-        this.router.navigate([], {
-          relativeTo: this.activatedRoute,
-          queryParams: { search: term || null },
-          queryParamsHandling: 'merge',
-        });
-        if (!term.trim()) {
-          return this.productService.getAllProducts();
-        }
-        return this.productService.searchProducts(term);
-      })
-    ).subscribe(this.handleProductResponse());
+      distinctUntilChanged()
+    ).subscribe(term => {
+      // Al buscar, navegamos a la ruta raíz y pasamos el término como queryParam
+      // Esto dispara la lógica en setupProductLoading
+      const queryParams = term ? { search: term } : {};
+      this.router.navigate(['/'], { queryParams: queryParams });
+    });
   }
 
   private handleProductResponse() {
@@ -114,45 +103,12 @@ export class ProductListComponent implements OnInit {
       }
     };
   }
-
-  loadProducts(): void {
-    this.errorMessage = null;
-    this.productService.getAllProducts().subscribe(this.handleProductResponse());
-  }
-
+  
   onSearchTermChange(): void {
     this.searchSubject.next(this.searchTerm);
   }
 
-  executeSearch(): void {
-    this.searchSubject.next(this.searchTerm);
-  }
-
-  /**
-   * Añade un producto al carrito, ahora con validación en el backend.
-   */
   addToCart(product: Product): void {
-    this.cartService.addToCart(product).subscribe({
-      next: () => {
-        // El snackbar ya se muestra en cart.service
-      },
-      error: (err) => {
-        // El snackbar ya se muestra en cart.service para errores de stock/validación
-        console.error('Error al añadir producto desde ProductList:', err);
-      }
-    });
-  }
-
-  loadTopSellingProducts(): void {
-    this.topSellingProducts$ = this.productService.getTopSellingProducts(5).pipe(
-      catchError(error => {
-        console.error('Error al cargar los productos más vendidos:', error);
-        return of([]);
-      })
-    );
-  }
-
-  viewProductDetail(productId: number): void {
-    this.router.navigate(['/productos', productId]);
+    this.cartService.addToCart(product);
   }
 }
