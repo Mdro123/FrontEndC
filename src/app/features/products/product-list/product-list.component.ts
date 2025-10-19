@@ -60,7 +60,7 @@ export class ProductListComponent implements OnInit {
     this.isLoading = true;
     this.products$ = this.activatedRoute.paramMap.pipe(
       switchMap(params => {
-        this.isLoading = true; // Activar carga en cada cambio de filtro
+        this.isLoading = true;
         const categoryId = params.get('categoryId');
         const searchTermFromQuery = this.activatedRoute.snapshot.queryParamMap.get('search');
 
@@ -73,7 +73,7 @@ export class ProductListComponent implements OnInit {
         }
       }),
       tap(() => {
-        this.isLoading = false; // Desactivar carga cuando los productos llegan
+        this.isLoading = false;
         this.errorMessage = null;
       }),
       catchError(err => {
