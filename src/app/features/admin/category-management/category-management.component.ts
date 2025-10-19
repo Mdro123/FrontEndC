@@ -12,6 +12,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatTooltipModule } from '@angular/material/tooltip'; // <-- 1. AÑADE ESTA LÍNEA
 import { Observable, of } from 'rxjs';
 import { CategoryService } from '../../../services/category.service';
 import { Category, CategoryDTO } from '../../../models/category.model';
@@ -23,7 +24,8 @@ import { Category, CategoryDTO } from '../../../models/category.model';
     CommonModule, MatTableModule, MatPaginatorModule, MatSortModule,
     MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule,
     MatDialogModule, MatSnackBarModule, MatProgressSpinnerModule,
-    MatCardModule, ReactiveFormsModule, DatePipe
+    MatCardModule, ReactiveFormsModule, DatePipe,
+    MatTooltipModule // <-- 2. AÑADE ESTA LÍNEA
   ],
   templateUrl: './category-management.component.html',
   styleUrls: ['./category-management.component.css']
@@ -63,7 +65,7 @@ export class CategoryManagementComponent implements OnInit, AfterViewInit {
         Validators.required,
         Validators.minLength(10),
         Validators.maxLength(255),
-        Validators.pattern('.*[a-zA-ZáéíóúÁÉÍÓÚñÑ].*') // Valida que contenga al menos una letra
+        Validators.pattern('.*[a-zA-ZáéíóúÁÉÍÓÚñÑ].*')
       ]]
     });
     this.loadCategories();
