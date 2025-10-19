@@ -29,13 +29,12 @@ import { Category } from '../../../models/category.model';
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit {
-  products$: Observable<Product[]> | null = null;
+  products$: Observable<Product[]> = of([]);
   categories$: Observable<Category[]> | null = null;
   errorMessage: string | null = null;
+  isLoading: boolean = true;
   searchTerm: string = '';
   private searchSubject = new Subject<string>();
-
-  listTitle: string = 'Nuestros Libros';
 
   constructor(
     private productService: ProductService,
@@ -58,25 +57,31 @@ export class ProductListComponent implements OnInit {
   }
 
   setupProductLoading(): void {
-    // Escucha tanto los parámetros de la ruta (/:categoryId) como los queryParams (?search=...)
-    this.activatedRoute.paramMap.pipe(
+    this.isLoading = true;
+    this.products$ = this.activatedRoute.paramMap.pipe(
       switchMap(params => {
+        this.isLoading = true; // Activar carga en cada cambio de filtro
         const categoryId = params.get('categoryId');
         const searchTermFromQuery = this.activatedRoute.snapshot.queryParamMap.get('search');
 
         if (categoryId) {
-          const id = parseInt(categoryId, 10);
-          this.categoryService.getCategoryById(id).pipe(tap(cat => this.listTitle = cat.nombre)).subscribe();
-          return this.productService.getProductsByCategory(id);
+          return this.productService.getProductsByCategory(parseInt(categoryId, 10));
         } else if (searchTermFromQuery) {
-          this.listTitle = `Resultados para "${searchTermFromQuery}"`;
           return this.productService.searchProducts(searchTermFromQuery);
         } else {
-          this.listTitle = 'Nuestros Libros';
           return this.productService.getAllProducts();
         }
+      }),
+      tap(() => {
+        this.isLoading = false; // Desactivar carga cuando los productos llegan
+        this.errorMessage = null;
+      }),
+      catchError(err => {
+        this.isLoading = false;
+        this.errorMessage = 'No se pudieron cargar los libros.';
+        return of([]);
       })
-    ).subscribe(this.handleProductResponse());
+    );
   }
 
   setupSearch(): void {
@@ -84,24 +89,9 @@ export class ProductListComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged()
     ).subscribe(term => {
-      // Al buscar, navegamos a la ruta raíz y pasamos el término como queryParam
-      // Esto dispara la lógica en setupProductLoading
       const queryParams = term ? { search: term } : {};
       this.router.navigate(['/'], { queryParams: queryParams });
     });
-  }
-
-  private handleProductResponse() {
-    return {
-      next: (products: Product[]) => {
-        this.products$ = of(products);
-        this.errorMessage = null;
-      },
-      error: (err: any) => {
-        this.errorMessage = 'No se pudieron cargar los libros.';
-        this.products$ = of([]);
-      }
-    };
   }
   
   onSearchTermChange(): void {
