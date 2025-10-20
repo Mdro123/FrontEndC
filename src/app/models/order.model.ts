@@ -3,6 +3,7 @@ export interface CartItemRequest {
   cantidad: number;
 }
 
+
 export interface ConfirmarCompraRequest {
   idMetodoPago: number;
   items: CartItemRequest[];
