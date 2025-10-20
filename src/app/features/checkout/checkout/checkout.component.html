@@ -1,15 +1,12 @@
-<div class="checkout-page-wrapper font-inter">
+<div class="checkout-page-wrapper">
   <div class="checkout-card">
 
-    <!-- Sección de Resumen del Pedido -->
     <div class="order-summary-panel">
       <h2 class="order-summary-title">Resumen del Pedido</h2>
-      <div class="order-items-scroll custom-scrollbar">
+      <div class="order-items-scroll">
         <ul *ngIf="cartItems.length > 0; else emptyCart" class="order-items-list">
           <li *ngFor="let item of cartItems" class="order-item">
-            <img [src]="item.imagenUrl || 'https://placehold.co/80x80/E0E7FF/4338CA?text=Producto'"
-                 alt="{{ item.titulo }}"
-                 class="order-item-image">
+            <img [src]="item.imagenUrl || 'https://placehold.co/80x80'" [alt]="item.titulo" class="order-item-image">
             <div class="order-item-details">
               <p class="order-item-title">{{ item.titulo }}</p>
               <p class="order-item-quantity">Cantidad: {{ item.quantity }}</p>
@@ -19,9 +16,7 @@
         </ul>
         <ng-template #emptyCart>
           <div class="empty-cart-message">
-            <mat-icon class="empty-cart-icon">shopping_cart</mat-icon>
             <p class="empty-cart-text">Tu carrito está vacío.</p>
-            <p class="empty-cart-subtext">Añade productos para proceder al pago.</p>
           </div>
         </ng-template>
       </div>
@@ -33,69 +28,66 @@
       </div>
     </div>
 
-    <!-- Sección de Formulario de Pago -->
     <div class="payment-info-panel">
       <h2 class="payment-info-title">Información de Pago</h2>
+      <div *ngIf="loading" class="loading-container"><mat-spinner></mat-spinner></div>
 
-      <div *ngIf="loading" class="loading-container">
-        <mat-spinner color="primary" [diameter]="50"></mat-spinner>
-        <p class="loading-text">Cargando formulario de pago...</p>
-      </div>
-
-      <form (ngSubmit)="handlePayment()" class="payment-form" *ngIf="!loading && !paymentSuccess">
+      <form [formGroup]="checkoutForm" (ngSubmit)="handlePayment()" class="payment-form" *ngIf="!loading && !paymentSuccess">
+        
         <mat-form-field appearance="outline" class="full-width-field">
           <mat-label>Nombre Completo</mat-label>
-          <input matInput [(ngModel)]="fullName" name="fullName" required placeholder="Ej: Juan Pérez">
-          <mat-icon matSuffix class="input-icon">person</mat-icon>
+          <input matInput formControlName="nombre" placeholder="Juan Pérez">
+          <mat-error *ngIf="checkoutForm.get('nombre')?.hasError('required')">Campo obligatorio.</mat-error>
+          <mat-error *ngIf="checkoutForm.get('nombre')?.hasError('minlength')">Debe tener al menos 5 caracteres.</mat-error>
+          <mat-error *ngIf="checkoutForm.get('nombre')?.hasError('maxlength')">Máximo 50 caracteres.</mat-error>
+          <mat-error *ngIf="checkoutForm.get('nombre')?.hasError('pattern')">Ingrese un nombre válido (sin números o c. especiales).</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width-field">
-          <mat-label>Dirección Línea 1</mat-label>
-          <input matInput [(ngModel)]="addressLine1" name="addressLine1" required placeholder="Ej: Av. Principal 123">
-          <mat-icon matSuffix class="input-icon">location_on</mat-icon>
+          <mat-label>Dirección</mat-label>
+          <input matInput formControlName="direccion" placeholder="Av. La República 150, Santiago de Surco">
+          <mat-error *ngIf="checkoutForm.get('direccion')?.hasError('required')">Campo obligatorio.</mat-error>
+          <mat-error *ngIf="checkoutForm.get('direccion')?.hasError('minlength')">Debe tener al menos 10 caracteres.</mat-error>
+          <mat-error *ngIf="checkoutForm.get('direccion')?.hasError('maxlength')">Máximo 100 caracteres.</mat-error>
+          <mat-error *ngIf="checkoutForm.get('direccion')?.hasError('pattern')">Ingrese una dirección válida.</mat-error>
         </mat-form-field>
 
         <div class="grid-2-cols">
-            <mat-form-field appearance="outline" class="full-width-field">
-                <mat-label>Ciudad</mat-label>
-                <input matInput [(ngModel)]="city" name="city" required placeholder="Ej: Lima">
-                <mat-icon matSuffix class="input-icon">location_city</mat-icon>
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="full-width-field">
-                <mat-label>Código Postal</mat-label>
-                <input matInput [(ngModel)]="zipCode" name="zipCode" required placeholder="Ej: Lima 01">
-                <mat-icon matSuffix class="input-icon">local_post_office</mat-icon>
-            </mat-form-field>
-        </div>
+          <mat-form-field appearance="outline" class="full-width-field">
+            <mat-label>Ciudad</mat-label>
+            <input matInput formControlName="ciudad" placeholder="Santiago de Surco">
+            <mat-error *ngIf="checkoutForm.get('ciudad')?.hasError('required')">Campo obligatorio.</mat-error>
+            <mat-error *ngIf="checkoutForm.get('ciudad')?.hasError('minlength')">Debe tener al menos 3 caracteres.</mat-error>
+            <mat-error *ngIf="checkoutForm.get('ciudad')?.hasError('maxlength')">Máximo 30 caracteres.</mat-error>
+            <mat-error *ngIf="checkoutForm.get('ciudad')?.hasError('pattern')">Ingrese una ciudad válida.</mat-error>
+          </mat-form-field>
 
-        <input type="hidden" [(ngModel)]="country" name="country">
+          <mat-form-field appearance="outline" class="full-width-field">
+            <mat-label>Código Postal</mat-label>
+            <input matInput formControlName="codigoPostal" placeholder="15039" maxlength="5">
+            <mat-error *ngIf="checkoutForm.get('codigoPostal')?.hasError('required')">Campo obligatorio.</mat-error>
+            <mat-error *ngIf="checkoutForm.get('codigoPostal')?.hasError('pattern')">El código postal solo debe contener números.</mat-error>
+            <mat-error *ngIf="checkoutForm.get('codigoPostal')?.hasError('minlength') || checkoutForm.get('codigoPostal')?.hasError('maxlength')">
+              El código postal debe tener 5 dígitos.
+            </mat-error>
+          </mat-form-field>
+        </div>
 
         <div class="stripe-card-container">
-          <label for="card-element" class="card-label">Información de la tarjeta</label>
-          <div id="card-element" #cardElement class="stripe-element-style"></div>
-          <div *ngIf="paymentError && !paymentSuccess" class="payment-error-message">{{ paymentError }}</div>
+          <label class="card-label">Información de la tarjeta</label>
+          <div id="card-element" #cardElement></div>
+          <div *ngIf="paymentError" class="payment-error-message">{{ paymentError }}</div>
         </div>
 
-        <button mat-raised-button color="primary" type="submit" class="pay-button" [disabled]="processing || paymentSuccess || cartItems.length === 0">
+        <button mat-raised-button color="primary" type="submit" class="pay-button" [disabled]="processing || checkoutForm.invalid">
           <span *ngIf="!processing">Pagar {{ cartSubtotal | currency:'S/':'symbol':'1.2-2' }}</span>
           <mat-spinner *ngIf="processing" [diameter]="24" class="button-spinner"></mat-spinner>
-          <span *ngIf="processing">Procesando...</span>
         </button>
       </form>
 
       <div *ngIf="paymentSuccess" class="payment-success-section">
-        <mat-icon class="success-icon">check_circle_outline</mat-icon>
         <h3 class="success-title">¡Pago Exitoso!</h3>
-        <p class="success-message">Tu pedido ha sido procesado correctamente.</p>
-        <button mat-raised-button color="accent" routerLink="/" class="continue-shopping-button">
-          Continuar Comprando
-        </button>
-      </div>
-
-      <div *ngIf="!loading && cartItems.length === 0 && !paymentSuccess" class="back-to-cart-container">
-        <button mat-button color="accent" routerLink="/carrito" class="back-to-cart-button">
-          <mat-icon>arrow_back</mat-icon> Volver al Carrito
-        </button>
+        <button mat-raised-button color="accent" routerLink="/">Continuar Comprando</button>
       </div>
     </div>
   </div>
