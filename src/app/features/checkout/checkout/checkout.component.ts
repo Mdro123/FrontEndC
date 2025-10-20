@@ -15,7 +15,6 @@ import { CartItem } from '../../../models/product.model';
 import { ConfirmarCompraRequest, PedidoResponse, CartItemRequest } from '../../../models/order.model';
 import { Subscription } from 'rxjs';
 
-
 declare var Stripe: any;
 
 @Component({
