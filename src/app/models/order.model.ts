@@ -1,7 +1,3 @@
-/**
- * Define las estructuras de datos relacionadas con los Pedidos.
- */
-
 export interface CartItemRequest {
   productId: number;
   cantidad: number;
@@ -11,6 +7,10 @@ export interface ConfirmarCompraRequest {
   idMetodoPago: number;
   items: CartItemRequest[];
   paymentMethodId?: string;
+  nombre: string;
+  direccion: string;
+  ciudad: string;
+  codigoPostal: string;
 }
 
 export interface OrderDetailResponse {
@@ -28,9 +28,9 @@ export interface PedidoResponse {
   idUsuario: number;
   nombreUsuario: string;
   metodoPagoNombre: string;
-  estado: string;
+  estado: string; 
   total: number;
-  fecha: string;
+  fecha: string; 
   createdAt: string;
   updatedAt: string;
   detalles: OrderDetailResponse[];
