@@ -76,7 +76,7 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
         Validators.required,
         Validators.minLength(5),
         Validators.maxLength(5),
-        Validators.pattern('^\\d{5}$')
+        Validators.pattern('^\\d+$')
       ]]
     });
 
