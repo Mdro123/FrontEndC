@@ -4,74 +4,99 @@
   <div class="actions-filter-section">
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Filtrar libros</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por título, autor, ISBN..." #input>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Buscar..." #input>
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
-    <button mat-raised-button class ="botonAñadir" (click)="openAddForm()">
+    <button mat-raised-button class="botonAñadir" (click)="openAddForm()">
       <mat-icon>add</mat-icon> Añadir Nuevo Libro
     </button>
   </div>
 
   <div *ngIf="isLoading" class="loading-spinner">
-    <mat-spinner diameter="50"></mat-spinner>
-    <p>Cargando libros...</p>
+    <mat-spinner diameter="50"></mat-spinner> <p>Cargando libros...</p>
   </div>
   <div *ngIf="errorMessage && !isLoading" class="error-message">
     <mat-icon color="warn">error_outline</mat-icon>
     <p>{{ errorMessage }}</p>
-    <button mat-raised-button color="warn" (click)="loadProducts()">Reintentar Carga</button>
+    <button mat-raised-button color="warn" (click)="loadProducts()">Reintentar</button>
   </div>
 
   <mat-card *ngIf="showForm" class="product-form-card">
     <mat-card-title>{{ isEditing ? 'Editar Libro' : 'Añadir Nuevo Libro' }}</mat-card-title>
     <mat-card-content>
-      <form (ngSubmit)="saveProduct()">
+      <form [formGroup]="productForm" (ngSubmit)="saveProduct()">
+        
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Título</mat-label>
-          <input matInput [(ngModel)]="currentProduct.titulo" name="titulo" required>
+          <input matInput formControlName="titulo">
+          <mat-error *ngIf="productForm.get('titulo')?.hasError('required')">Campo obligatorio.</mat-error>
+          <mat-error *ngIf="productForm.get('titulo')?.hasError('minlength')">Debe tener al menos 3 caracteres.</mat-error>
+          <mat-error *ngIf="productForm.get('titulo')?.hasError('maxlength')">Máximo 100 caracteres.</mat-error>
+          <mat-error *ngIf="productForm.get('titulo')?.hasError('pattern')">El título debe contener texto.</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Autor</mat-label>
-          <input matInput [(ngModel)]="currentProduct.autor" name="autor" required>
+          <input matInput formControlName="autor">
+           <mat-error *ngIf="productForm.get('autor')?.hasError('required')">Campo obligatorio.</mat-error>
+          <mat-error *ngIf="productForm.get('autor')?.hasError('minlength')">Debe tener al menos 3 caracteres.</mat-error>
+          <mat-error *ngIf="productForm.get('autor')?.hasError('maxlength')">Máximo 50 caracteres.</mat-error>
+          <mat-error *ngIf="productForm.get('autor')?.hasError('pattern')">El autor debe contener texto.</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>ISBN</mat-label>
-          <input matInput [(ngModel)]="currentProduct.isbn" name="isbn" required>
+          <input matInput formControlName="isbn" maxlength="13">
+          <mat-error *ngIf="productForm.get('isbn')?.hasError('required')">Campo obligatorio.</mat-error>
+          <mat-error *ngIf="productForm.get('isbn')?.hasError('pattern')">El ISBN solo debe contener números.</mat-error>
+          <mat-error *ngIf="productForm.get('isbn')?.hasError('minlength') || productForm.get('isbn')?.hasError('maxlength')">
+            El ISBN debe tener 13 dígitos.
+          </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Precio</mat-label>
-          <input matInput type="number" [(ngModel)]="currentProduct.precio" name="precio" required min="0.01">
+          <input matInput type="number" formControlName="precio" min="0.01">
+          <mat-error *ngIf="productForm.get('precio')?.hasError('required')">Campo obligatorio.</mat-error>
+          <mat-error *ngIf="productForm.get('precio')?.hasError('min')">El precio debe ser mayor a 0.</mat-error>
+          <mat-error *ngIf="productForm.get('precio')?.hasError('pattern')">El precio solo debe contener números.</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Stock</mat-label>
-          <input matInput type="number" [(ngModel)]="currentProduct.stock" name="stock" required min="0">
+          <input matInput type="number" formControlName="stock" min="0">
+           <mat-error *ngIf="productForm.get('stock')?.hasError('required')">Campo obligatorio.</mat-error>
+          <mat-error *ngIf="productForm.get('stock')?.hasError('min')">El stock no puede ser negativo.</mat-error>
+          <mat-error *ngIf="productForm.get('stock')?.hasError('pattern')">El stock debe ser un número entero.</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Categoría</mat-label>
-          <mat-select [(ngModel)]="currentProduct.idCategoria" name="idCategoria" required>
-            <mat-option *ngFor="let cat of categories" [value]="cat.id">
-              {{ cat.nombre }}
-            </mat-option>
+          <mat-select formControlName="idCategoria">
+            <mat-option *ngFor="let cat of categories" [value]="cat.id">{{ cat.nombre }}</mat-option>
           </mat-select>
+          <mat-error *ngIf="productForm.get('idCategoria')?.hasError('required')">Debes seleccionar una categoría.</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>URL de Imagen</mat-label>
-          <input matInput [(ngModel)]="currentProduct.imagenUrl" name="imagenUrl">
+          <input matInput formControlName="imagenUrl" placeholder="https://...">
+          <mat-error *ngIf="productForm.get('imagenUrl')?.hasError('required')">Campo obligatorio.</mat-error>
+          <mat-error *ngIf="productForm.get('imagenUrl')?.hasError('pattern')">URL inválida (sin espacios, con http/https, y terminar en .jpg, .jpeg o .png).</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Sinopsis</mat-label>
-          <textarea matInput [(ngModel)]="currentProduct.sinopsis" name="sinopsis" rows="5"></textarea>
+          <textarea matInput formControlName="sinopsis" rows="4"></textarea>
+          <mat-error *ngIf="productForm.get('sinopsis')?.hasError('required')">Campo obligatorio.</mat-error>
+          <mat-error *ngIf="productForm.get('sinopsis')?.hasError('maxlength')">Máximo 500 caracteres.</mat-error>
+          <mat-error *ngIf="productForm.get('sinopsis')?.hasError('pattern')">La sinopsis debe contener texto.</mat-error>
         </mat-form-field>
 
+        <div *ngIf="formErrorMessage" class="error-message">{{ formErrorMessage }}</div>
+
         <div class="form-actions">
-          <button mat-raised-button color="primary" type="submit">Guardar</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="productForm.invalid">Guardar</button>
           <button mat-button type="button" (click)="cancelForm()">Cancelar</button>
         </div>
       </form>
@@ -80,62 +105,51 @@
 
   <div *ngIf="!isLoading && !errorMessage && !showForm" class="mat-elevation-z8">
     <mat-table [dataSource]="dataSource" matSort>
-
       <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-        <td mat-cell *matCellDef="let element"> {{ element.id }} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+        <td mat-cell *matCellDef="let element">{{element.id}}</td>
       </ng-container>
-
       <ng-container matColumnDef="titulo">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Título </th>
-        <td mat-cell *matCellDef="let element"> {{ element.titulo }} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Título</th>
+        <td mat-cell *matCellDef="let element">{{element.titulo}}</td>
       </ng-container>
-
       <ng-container matColumnDef="autor">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Autor </th>
-        <td mat-cell *matCellDef="let element"> {{ element.autor }} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Autor</th>
+        <td mat-cell *matCellDef="let element">{{element.autor}}</td>
       </ng-container>
-
       <ng-container matColumnDef="categoria">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Categoría </th>
-        <td mat-cell *matCellDef="let element"> {{ element.categoria?.nombre || 'N/A' }} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Categoría</th>
+        <td mat-cell *matCellDef="let element">{{element.categoria?.nombre || 'N/A'}}</td>
       </ng-container>
-
       <ng-container matColumnDef="precio">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Precio </th>
-        <td mat-cell *matCellDef="let element"> {{ element.precio | currency:'S/.':'symbol':'1.2-2' }} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio</th>
+        <td mat-cell *matCellDef="let element">{{element.precio | currency:'S/.':'symbol':'1.2-2'}}</td>
       </ng-container>
-
       <ng-container matColumnDef="stock">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Stock </th>
-        <td mat-cell *matCellDef="let element"> {{ element.stock }} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Stock</th>
+        <td mat-cell *matCellDef="let element">{{element.stock}}</td>
       </ng-container>
-
       <ng-container matColumnDef="isbn">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> ISBN </th>
-        <td mat-cell *matCellDef="let element"> {{ element.isbn }} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>ISBN</th>
+        <td mat-cell *matCellDef="let element">{{element.isbn}}</td>
       </ng-container>
-
       <ng-container matColumnDef="acciones">
-        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
         <td mat-cell *matCellDef="let element">
           <button mat-icon-button color="primary" (click)="openEditForm(element)">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="deleteProduct(element.id)">
+          <button mat-icon-button color="warn" (click)="deleteProduct(element.id, element.titulo)">
             <mat-icon>delete</mat-icon>
           </button>
         </td>
       </ng-container>
-
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell" colspan="8">No se encontraron libros que coincidan con "{{input.value}}"</td>
       </tr>
     </mat-table>
-
     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
   </div>
 </div>
