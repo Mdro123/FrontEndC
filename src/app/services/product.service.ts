@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators'; // <-- Importa el operador 'map'
 import { Product, ProductDTO, ProductoMasVendidoDTO } from '../models/product.model';
 import { environment } from '../../environments/environment.prod';
 
@@ -15,12 +14,6 @@ export class ProductService {
 
   getAllProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(this.apiUrl);
-  }
-
-  getTopSellingProducts(limit: number): Observable<ProductoMasVendidoDTO[]> {
-    return this.getAllProducts().pipe(
-      map(products => products.slice(0, limit))
-    );
   }
 
   getProductsByCategory(categoryId: number): Observable<Product[]> {
@@ -45,5 +38,15 @@ export class ProductService {
 
   deleteProduct(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  /**
+   * Obtiene la lista de productos más vendidos del backend.
+   * @param limit El número de productos más vendidos a obtener.
+   * @returns Un Observable con la lista de ProductoMasVendidoDTO.
+   */
+  getTopSellingProducts(limit: number): Observable<ProductoMasVendidoDTO[]> {
+    // ESTA ES TU LÍNEA DE CÓDIGO ORIGINAL Y CORRECTA
+    return this.http.get<ProductoMasVendidoDTO[]>(`${this.apiUrl}/mas-vendidos?limit=${limit}`);
   }
 }
