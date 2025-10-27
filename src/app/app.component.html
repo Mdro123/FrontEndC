@@ -1,4 +1,3 @@
-<!-- Barra Superior de Contacto -->
 <div class="topline">
   <a href="https://wa.me/51970766227" target="_blank" rel="noopener noreferrer" class="topline-link">
     <i class="bi bi-whatsapp"></i>
@@ -6,7 +5,6 @@
   </a>
 </div>
 
-<!-- Barra de Navegación Principal -->
 <mat-toolbar class="app-navbar">
   <a routerLink="/" class="navbar-brand-button">
     <img src="assets/img/logocrisol.png" alt="Logo de la Librería" class="navbar-logo-image">
@@ -16,7 +14,6 @@
   <span class="navbar-center-spacer-right"></span>
 
   <div class="navbar-right-section">
-    <!-- Botón de Ingresar (para usuarios no logueados) -->
     <ng-container *ngIf="(isLoggedIn$ | async) === false">
       <button mat-button routerLink="/login" class="navbar-nav-button icon-button">
         <i class="bi bi-person navbar-nav-icon"></i>
@@ -24,7 +21,6 @@
       </button>
     </ng-container>
 
-    <!-- Menú de Usuario (para usuarios logueados) -->
     <ng-container *ngIf="(isLoggedIn$ | async) === true">
       <button mat-button
               [matMenuTriggerFor]="userOptionsMenu"
@@ -49,7 +45,6 @@
       </mat-menu>
     </ng-container>
 
-    <!-- Botón del Carrito -->
     <button mat-button routerLink="/carrito"
             [matBadge]="cartItemCount$ | async"
             [matBadgeHidden]="(cartItemCount$ | async) === 0"
@@ -62,12 +57,31 @@
   </div>
 </mat-toolbar>
 
-<!-- Contenedor para el Contenido de las Páginas -->
 <div class="main-content">
   <router-outlet></router-outlet>
 </div>
 
-<!-- Pie de Página -->
+<div style="padding: 20px; border-top: 1px solid #ccc; text-align: center;">
+  <h2>Pruebas del Chatbot</h2>
+
+  <button mat-stroked-button color="primary" (click)="toggleListen()" style="margin-right: 10px;">
+    <mat-icon *ngIf="chatbotService.isListening">mic_off</mat-icon>
+    <mat-icon *ngIf="!chatbotService.isListening">mic</mat-icon>
+    {{ chatbotService.isListening ? 'Detener Escucha' : 'Iniciar Escucha' }}
+  </button>
+
+  <button mat-stroked-button color="accent" (click)="testSpeak()">
+    <mat-icon>volume_up</mat-icon>
+    Probar Voz
+  </button>
+
+  <p *ngIf="chatbotService.isListening" style="color: blue; margin-top: 10px;">
+    <mat-icon>hearing</mat-icon> Escuchando...
+  </p>
+  <p *ngIf="recognizedText" style="margin-top: 10px;">
+    Texto reconocido: <strong>{{ recognizedText }}</strong>
+  </p>
+</div>
 <footer class="app-footer">
   <div class="footer-content">
     <p>&copy; 2025 Librería Crisol. Todos los derechos reservados.</p>
