@@ -17,7 +17,7 @@
   <div class="search-bar">
 <mat-form-field appearance="outline" class="full-width-search">
   <mat-label>Buscar por Título o Autor</mat-label>
-  <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchTermChange()" (keyup.enter)="executeSearch()" ...>
+  <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchTermChange()" (keyup.enter)="executeSearch()">
   <button mat-icon-button matSuffix (click)="executeSearch()" aria-label="Buscar">
     <mat-icon>search</mat-icon>
   </button>
