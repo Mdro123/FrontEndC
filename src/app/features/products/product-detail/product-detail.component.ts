@@ -1,29 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common'; // Importa CurrencyPipe
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { ProductService } from '../../../services/product.service';
+import { Product } from '../../../models/product.model';
+import { Observable, switchMap, of, tap } from 'rxjs'; // Importa 'tap'
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ProductService } from '../../../services/product.service';
 import { CartService } from '../../../services/cart.service';
-import { Product } from '../../../models/product.model';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; // <--- Importa MatSnackBarModule aquí también
+import { ChatbotService } from '../../../services/chatbot.service';
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
   imports: [
-    CommonModule,
-    RouterLink,
-    CurrencyPipe,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    MatSnackBarModule // <--- ¡CAMBIA ESTO A MatSnackBarModule!
+    CommonModule, RouterLink, MatCardModule, MatButtonModule,
+    MatIconModule, MatProgressSpinnerModule, CurrencyPipe // Asegúrate de que CurrencyPipe esté aquí
   ],
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.css']
@@ -37,47 +30,61 @@ export class ProductDetailComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private productService: ProductService,
     private cartService: CartService,
-    private snackBar: MatSnackBar
+    public chatbotService: ChatbotService,
+    private currencyPipe: CurrencyPipe // Inyecta el CurrencyPipe
   ) {}
 
   ngOnInit(): void {
     this.product$ = this.activatedRoute.paramMap.pipe(
+      tap(() => { this.loading = true; this.errorMessage = null; }), // Inicia la carga
       switchMap(params => {
-        this.loading = true;
-        this.errorMessage = null;
         const productId = params.get('id');
         if (productId) {
           return this.productService.getProductById(parseInt(productId, 10));
+        } else {
+          this.errorMessage = 'ID de producto no encontrado.';
+          return of(null);
         }
-        this.errorMessage = 'ID de producto no encontrado.';
-        this.loading = false;
-        return of(null);
-      })
-    );
-
-    this.product$.subscribe({
-      next: (product) => {
+      }),
+      tap(product => {
         this.loading = false;
         if (!product) {
           this.errorMessage = 'Libro no encontrado.';
         }
-      },
-      error: (err) => {
+      }),
+      catchError(err => {
         this.loading = false;
         this.errorMessage = 'Error al cargar los detalles del libro.';
-      }
-    });
+        console.error('Error fetching product details:', err);
+        return of(null);
+      })
+    );
   }
 
   addToCart(product: Product): void {
-    this.cartService.addToCart(product).subscribe({
-      next: () => {
-        // El snackbar ya se muestra en cart.service
-      },
-      error: (err) => {
-        // El snackbar ya se muestra en cart.service para errores de stock/validación
-        console.error('Error al añadir producto desde ProductDetail:', err);
-      }
-    });
+    this.cartService.addToCart(product);
+  }
+
+  // --- MÉTODO MODIFICADO ---
+  speakProductDetails(product: Product): void {
+    if (!product) return;
+
+    if (this.chatbotService.isSpeaking) {
+      this.chatbotService.stopSpeaking();
+    } else {
+      // 1. Formatear el precio usando CurrencyPipe
+      const formattedPrice = this.currencyPipe.transform(product.precio, 'S/.', 'symbol', '1.2-2', 'es-PE');
+      
+      // 2. Construir el texto completo
+      const fullText = `
+        Título: ${product.titulo}.
+        Autor: ${product.autor}.
+        Precio: ${formattedPrice}.
+        Sinopsis: ${product.sinopsis || 'No disponible.'}
+      `;
+      
+      // 3. Llamar al servicio de voz
+      this.chatbotService.speak(fullText);
+    }
   }
 }
