@@ -15,13 +15,23 @@
 
 <div class="search-wrapper">
   <div class="search-bar">
-<mat-form-field appearance="outline" class="full-width-search">
-  <mat-label>Buscar por Título o Autor</mat-label>
-  <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchTermChange()" (keyup.enter)="executeSearch()">
-  <button mat-icon-button matSuffix (click)="executeSearch()" aria-label="Buscar">
-    <mat-icon>search</mat-icon>
-  </button>
-</mat-form-field>
+    <mat-form-field appearance="outline" class="full-width-search">
+      <mat-label>Buscar por Título o Autor</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchTermChange()" (keyup.enter)="executeSearch()">
+      
+      <button mat-icon-button matSuffix 
+              (click)="startVoiceSearch()" 
+              [color]="chatbotService.isListening ? 'warn' : ''"
+              aria-label="Buscar por voz">
+        <mat-icon *ngIf="!chatbotService.isListening">mic</mat-icon>
+        <mat-icon *ngIf="chatbotService.isListening">mic_off</mat-icon>
+      </button>
+
+      <button mat-icon-button matSuffix (click)="executeSearch()" aria-label="Buscar">
+        <mat-icon>search</mat-icon>
+      </button>
+      
+      </mat-form-field>
   </div>
 </div>
 
@@ -61,7 +71,7 @@
               <h3 class="top-selling-title" (click)="viewProductDetail(product.id)">{{ product.titulo }}</h3>
               <p class="top-selling-author">{{ product.autor }}</p>
               <p class="top-selling-price">{{ product.precio | currency:'S/.':'symbol':'1.2-2' }}</p>
-              </mat-card-content>
+            </mat-card-content>
           </mat-card>
         </div>
       </div>
@@ -70,6 +80,11 @@
 </ng-container>
 
 <div class="page-content-wrapper">
+  
+  <div *ngIf="chatbotService.isListening" style="text-align: center; color: #f44336; margin-bottom: 15px;">
+    <mat-icon>mic</mat-icon> Escuchando...
+  </div>
+
   <ng-container *ngIf="!(products$ | async) && !errorMessage">
     <div class="loading-spinner">
       <mat-spinner></mat-spinner>
@@ -93,7 +108,7 @@
             <p class="product-price">{{ product.precio | currency:'S/.':'symbol':'1.2-2' }}</p>
           </mat-card-content>
           <div class="slide-up-actions">
-            <button mat-button class="add-to-cart-button" [disabled]="product.stock === 0" (click)="$event.preventDefault(); $event.stopPropagation(); addToCart(product)">
+            <button mat-button class="add-to-cart-button" [disabled]="product.stock === 0" (click)="$event.preventDefault(); $event.stopPropagation(); addToCart(product)" [attr.aria-label]="'Añadir ' + product.titulo + ' al carrito'">
               <mat-icon>add_shopping_cart</mat-icon>
               <span>{{ product.stock === 0 ? 'Agotado' : 'Añadir al Carrito' }}</span>
             </button>
