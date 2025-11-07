@@ -9,6 +9,19 @@
   background-color: #f0f2f5;
 }
 
+.sinopsis-header {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espacio entre el título y el botón */
+  margin-bottom: 10px;
+}
+
+.sinopsis-header h3 {
+  margin: 0; /* Quita el margen por defecto del h3 */
+  font-size: 1.3em;
+  color: #333;
+}
+
 .product-detail-card {
   max-width: 900px;
   width: 100%;
