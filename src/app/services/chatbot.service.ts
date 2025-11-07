@@ -1,6 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Subject } from 'rxjs';
 
+// Declaraciones para compatibilidad
 declare var webkitSpeechRecognition: any;
 declare var SpeechRecognition: any;
 
@@ -11,7 +12,6 @@ export class ChatbotService {
 
   isListening: boolean = false;
   transcript: string = '';
-
   private recognition: any;
   public transcript$ = new Subject<string>(); // Emite el texto reconocido
 
@@ -20,7 +20,6 @@ export class ChatbotService {
     this.setupSTT();
   }
 
-  // --- CONFIGURACIÓN DE STT (Speech-to-Text) ---
   private setupSTT(): void {
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
       this.recognition = new ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition)();
@@ -28,7 +27,6 @@ export class ChatbotService {
       this.recognition.lang = 'es-PE';
       this.recognition.interimResults = false;
 
-      // Evento: Cuando se detecta voz y se transcribe
       this.recognition.onresult = (event: any) => {
         const last = event.results.length - 1;
         const recognizedText = event.results[last][0].transcript;
@@ -38,11 +36,9 @@ export class ChatbotService {
           console.log("Texto reconocido:", this.transcript);
           this.transcript$.next(this.transcript); // Emite el texto
           this.isListening = false;
-          
         });
       };
 
-      // Evento: Cuando termina la escucha
       this.recognition.onend = () => {
         this.ngZone.run(() => {
           if (this.isListening) {
@@ -52,7 +48,6 @@ export class ChatbotService {
         });
       };
 
-      // Evento: Manejo de errores
       this.recognition.onerror = (event: any) => {
         this.ngZone.run(() => {
           console.error("Error en SpeechRecognition:", event.error);
@@ -66,13 +61,12 @@ export class ChatbotService {
     }
   }
 
-  // Inicia el reconocimiento de voz
   startListening(): void {
     if (!this.recognition) {
       console.warn("STT no disponible.");
       return;
     }
-    if (this.isListening) { // Modificado: ya no comprueba 'isSpeaking'
+    if (this.isListening) {
       console.log("Ya está escuchando.");
       return;
     }
@@ -84,7 +78,6 @@ export class ChatbotService {
     this.recognition.start();
   }
 
-  // Detiene el reconocimiento de voz
   stopListening(): void {
     if (this.recognition && this.isListening) {
       console.log("Deteniendo escucha manualmente...");
@@ -94,5 +87,4 @@ export class ChatbotService {
       });
     }
   }
-
 }
