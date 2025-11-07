@@ -11,7 +11,6 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthService, UserData } from './services/auth.service';
 import { CartService } from './services/cart.service';
-// No importamos ChatbotService ni OnDestroy ni Subscription
 
 @Component({
   selector: 'app-root',
