@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe, registerLocaleData } from '@angular/common';
+import localeEsPe from '@angular/common/locales/es-PE'; 
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductService } from '../../../services/product.service';
 import { Product } from '../../../models/product.model';
@@ -10,6 +11,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CartService } from '../../../services/cart.service';
 import { ChatbotService } from '../../../services/chatbot.service';
+
+registerLocaleData(localeEsPe, 'es-PE');
 
 @Component({
   selector: 'app-product-detail',
@@ -22,8 +25,6 @@ import { ChatbotService } from '../../../services/chatbot.service';
     MatIconModule, 
     MatProgressSpinnerModule
   ],
-
-  providers: [CurrencyPipe],
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.css']
 })
@@ -36,8 +37,8 @@ export class ProductDetailComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private productService: ProductService,
     private cartService: CartService,
-    public chatbotService: ChatbotService,
-    private currencyPipe: CurrencyPipe 
+    public chatbotService: ChatbotService
+    // --- 3. CurrencyPipe ELIMINADO DEL CONSTRUCTOR ---
   ) {}
 
   ngOnInit(): void {
@@ -77,7 +78,9 @@ export class ProductDetailComponent implements OnInit {
     if (this.chatbotService.isSpeaking) {
       this.chatbotService.stopSpeaking();
     } else {
-      const formattedPrice = this.currencyPipe.transform(product.precio, 'S/.', 'symbol', '1.2-2', 'es-PE');
+      const pipe = new CurrencyPipe('es-PE');
+      const formattedPrice = pipe.transform(product.precio, 'S/.', 'symbol', '1.2-2');
+      // ------------------------------------
       
       const fullText = `
         Título: ${product.titulo}.
