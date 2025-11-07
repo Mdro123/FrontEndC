@@ -1,7 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Subject } from 'rxjs';
 
-// Declaraciones para compatibilidad
 declare var webkitSpeechRecognition: any;
 declare var SpeechRecognition: any;
 
