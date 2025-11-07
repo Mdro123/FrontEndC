@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core'; 
 import { CommonModule, CurrencyPipe, UpperCasePipe } from '@angular/common';
 import { ProductService } from '../../../services/product.service';
 import { Product, ProductoMasVendidoDTO } from '../../../models/product.model';
-import { Observable, Subject, of } from 'rxjs';
+import { Observable, Subject, of, Subscription } from 'rxjs'; 
 import { switchMap, debounceTime, distinctUntilChanged, catchError, take } from 'rxjs/operators';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -16,7 +16,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { CartService } from '../../../services/cart.service';
 import { CategoryService } from '../../../services/category.service';
 import { Category } from '../../../models/category.model';
-import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ChatbotService } from '../../../services/chatbot.service'; 
 
 @Component({
   selector: 'app-product-list',
@@ -29,7 +30,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, OnDestroy { // --- AÑADIDO OnDestroy
   products$: Observable<Product[]> | null = null;
   categories$: Observable<Category[]> | null = null;
   errorMessage: string | null = null;
@@ -38,13 +39,19 @@ export class ProductListComponent implements OnInit {
 
   topSellingProducts$: Observable<ProductoMasVendidoDTO[]> | null = null;
 
+  // --- AÑADIDO ---
+  // Propiedad para guardar la suscripción al texto del chatbot
+  private transcriptSubscription!: Subscription;
+
   constructor(
     private productService: ProductService,
     private activatedRoute: ActivatedRoute,
     private cartService: CartService,
     private categoryService: CategoryService,
     private router: Router,
-    private snackBar: MatSnackBar // Inyecta MatSnackBar
+    private snackBar: MatSnackBar,
+    // --- AÑADIDO: Inyectamos el ChatbotService y lo hacemos público ---
+    public chatbotService: ChatbotService 
   ) {}
 
   ngOnInit(): void {
@@ -52,6 +59,37 @@ export class ProductListComponent implements OnInit {
     this.setupProductLoading();
     this.setupSearch();
     this.loadTopSellingProducts();
+
+    // --- AÑADIDO: Nos suscribimos al texto reconocido por el chatbot ---
+    this.subscribeToVoiceSearch();
+  }
+
+  // --- AÑADIDO: Nuevo método para limpiar la suscripción ---
+  ngOnDestroy(): void {
+    if (this.transcriptSubscription) {
+      this.transcriptSubscription.unsubscribe();
+    }
+  }
+
+  // --- AÑADIDO: Nuevo método para manejar la lógica de suscripción ---
+  private subscribeToVoiceSearch(): void {
+    this.transcriptSubscription = this.chatbotService.transcript$.subscribe(transcript => {
+      // 1. Asigna el texto reconocido a la barra de búsqueda
+      this.searchTerm = transcript;
+      // 2. Llama al método que ejecuta la búsqueda
+      this.onSearchTermChange();
+    });
+  }
+
+  // --- AÑADIDO: Nuevo método que llamará el botón del micrófono ---
+  startVoiceSearch(): void {
+    // Si ya está escuchando, lo detenemos (para cancelar)
+    if (this.chatbotService.isListening) {
+      this.chatbotService.stopListening();
+    } else {
+      // Si no, inicia la escucha
+      this.chatbotService.startListening();
+    }
   }
 
   loadCategories(): void {
