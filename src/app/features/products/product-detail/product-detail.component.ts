@@ -15,12 +15,15 @@ import { ChatbotService } from '../../../services/chatbot.service';
   selector: 'app-product-detail',
   standalone: true,
   imports: [
-    CommonModule, RouterLink, MatCardModule, MatButtonModule,
-    MatIconModule, MatProgressSpinnerModule, CurrencyPipe // Está bien aquí (para el HTML)
+    CommonModule,
+    RouterLink, 
+    MatCardModule, 
+    MatButtonModule,
+    MatIconModule, 
+    MatProgressSpinnerModule
   ],
-  // --- LÍNEA DE CORRECCIÓN AÑADIDA AQUÍ ---
-  providers: [CurrencyPipe], // Esto permite inyectarlo en el constructor
-  // ------------------------------------
+
+  providers: [CurrencyPipe],
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.css']
 })
@@ -34,7 +37,7 @@ export class ProductDetailComponent implements OnInit {
     private productService: ProductService,
     private cartService: CartService,
     public chatbotService: ChatbotService,
-    private currencyPipe: CurrencyPipe // Ahora esto funcionará
+    private currencyPipe: CurrencyPipe 
   ) {}
 
   ngOnInit(): void {
@@ -74,10 +77,8 @@ export class ProductDetailComponent implements OnInit {
     if (this.chatbotService.isSpeaking) {
       this.chatbotService.stopSpeaking();
     } else {
-      // 1. Formatear el precio usando el CurrencyPipe inyectado
       const formattedPrice = this.currencyPipe.transform(product.precio, 'S/.', 'symbol', '1.2-2', 'es-PE');
       
-      // 2. Construir el texto completo
       const fullText = `
         Título: ${product.titulo}.
         Autor: ${product.autor}.
@@ -85,7 +86,6 @@ export class ProductDetailComponent implements OnInit {
         Sinopsis: ${product.sinopsis || 'No disponible.'}
       `;
       
-      // 3. Llamar al servicio de voz
       this.chatbotService.speak(fullText);
     }
   }
