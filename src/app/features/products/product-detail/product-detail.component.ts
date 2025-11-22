@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe, registerLocaleData } from '@angular/common';
-import localeEsPe from '@angular/common/locales/es-PE'; 
+import localeEsPe from '@angular/common/locales/es-PE';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductService } from '../../../services/product.service';
 import { Product } from '../../../models/product.model';
@@ -18,12 +18,8 @@ registerLocaleData(localeEsPe, 'es-PE');
   selector: 'app-product-detail',
   standalone: true,
   imports: [
-    CommonModule,
-    RouterLink, 
-    MatCardModule, 
-    MatButtonModule,
-    MatIconModule, 
-    MatProgressSpinnerModule
+    CommonModule, RouterLink, MatCardModule, MatButtonModule,
+    MatIconModule, MatProgressSpinnerModule
   ],
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.css']
@@ -38,7 +34,6 @@ export class ProductDetailComponent implements OnInit {
     private productService: ProductService,
     private cartService: CartService,
     public chatbotService: ChatbotService
-    // --- 3. CurrencyPipe ELIMINADO DEL CONSTRUCTOR ---
   ) {}
 
   ngOnInit(): void {
@@ -68,9 +63,19 @@ export class ProductDetailComponent implements OnInit {
     );
   }
 
+  // --- MÉTODO CORREGIDO ---
   addToCart(product: Product): void {
-    this.cartService.addToCart(product);
+    // Hay que suscribirse (.subscribe) para que la acción se ejecute
+    this.cartService.addToCart(product).subscribe({
+      next: () => {
+        // El éxito se maneja en el servicio (SnackBar)
+      },
+      error: (err) => {
+        console.error('Error al añadir al carrito desde detalle:', err);
+      }
+    });
   }
+  // ------------------------
 
   speakProductDetails(product: Product): void {
     if (!product) return;
@@ -78,9 +83,9 @@ export class ProductDetailComponent implements OnInit {
     if (this.chatbotService.isSpeaking) {
       this.chatbotService.stopSpeaking();
     } else {
+      // Creamos la instancia manual del Pipe como acordamos para evitar errores de inyección
       const pipe = new CurrencyPipe('es-PE');
       const formattedPrice = pipe.transform(product.precio, 'S/.', 'symbol', '1.2-2');
-      // ------------------------------------
       
       const fullText = `
         Título: ${product.titulo}.
