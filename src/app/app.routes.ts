@@ -8,10 +8,12 @@ import { CheckoutComponent } from './features/checkout/checkout/checkout.compone
 import { OrderConfirmationComponent } from './features/orders/order-confirmation/order-confirmation.component';
 import { authGuard } from './guards/auth.guards';
 import { adminGuard } from './guards/admin.guard';
-import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard.component'; // Importar AdminDashboardComponent
+import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard.component';
+// --- 1. IMPORTAR EL COMPONENTE DE LISTA DE DESEOS ---
+import { MyWishlistComponent } from './features/wishlist/my-wishlist/my-wishlist.component';
 
 export const routes: Routes = [
-  // ... (rutas públicas y privadas existentes se mantienen igual) ...
+  // --- RUTAS PÚBLICAS ---
   {
     path: '',
     component: ProductListComponent,
@@ -37,6 +39,7 @@ export const routes: Routes = [
     component: CartComponent
   },
 
+  // --- RUTAS PRIVADAS (Requieren Login) ---
   {
     path: 'checkout',
     component: CheckoutComponent,
@@ -53,7 +56,15 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
 
-  // --- RUTA DE ADMINISTRADOR CON RUTAS HIJAS (¡CAMBIO AQUÍ!) ---
+  // --- 2. NUEVA RUTA: MI LISTA DE DESEOS ---
+  {
+    path: 'mi-lista-deseos',
+    component: MyWishlistComponent,
+    canActivate: [authGuard] // Protegida: solo usuarios logueados pueden verla
+  },
+  // -----------------------------------------
+
+  // --- RUTA DE ADMINISTRADOR ---
   {
     path: 'admin',
     component: AdminDashboardComponent,
@@ -69,7 +80,6 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/category-management/category-management.component').then(m => m.CategoryManagementComponent)
       },
       {
-        // CAMBIADO: Antes era 'metodos-pago', ahora es 'pedidos' y carga OrderManagementComponent
         path: 'pedidos',
         loadComponent: () => import('./features/admin/order-management/order-management.component').then(m => m.OrderManagementComponent)
       },
