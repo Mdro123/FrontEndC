@@ -14,7 +14,8 @@
   <span class="navbar-center-spacer-right"></span>
 
   <div class="navbar-right-section">
-    <!-- Sección de Login / Usuario -->
+    
+    <!-- Bloque NO Logueado -->
     <ng-container *ngIf="(isLoggedIn$ | async) === false">
       <button mat-button routerLink="/login" class="navbar-nav-button icon-button">
         <i class="bi bi-person navbar-nav-icon"></i>
@@ -22,35 +23,47 @@
       </button>
     </ng-container>
 
+    <!-- Bloque Logueado -->
     <ng-container *ngIf="(isLoggedIn$ | async) === true">
+      
+      <!-- Botón que abre el menú -->
       <button mat-button
               [matMenuTriggerFor]="userOptionsMenu"
-              #userOptionsTrigger="matMenuTrigger"
-              (mouseenter)="userOptionsTrigger.openMenu()"
               class="navbar-nav-button icon-button">
         <i class="bi bi-person-fill navbar-nav-icon"></i>
         <span class="icon-button-text">Hola, {{ (currentUser$ | async)?.nombres }}</span>
       </button>
-      <mat-menu #userOptionsMenu="matMenu" (mouseleave)="userOptionsTrigger.closeMenu()" class="app-menu-panel">
-        <div (mouseleave)="userOptionsTrigger.closeMenu()">
-          <button mat-menu-item routerLink="/mis-pedidos" class="app-menu-item">
-            <i class="bi bi-receipt-fill app-menu-item-icon"></i> Mis Pedidos
-          </button>
-          <button mat-menu-item *ngIf="isAdmin$ | async" routerLink="/admin" class="app-menu-item">
-            <i class="bi bi-gear-fill app-menu-item-icon"></i> Admin
-          </button>
-          <button mat-menu-item (click)="logout()" class="app-menu-item">
-            <i class="bi bi-box-arrow-right app-menu-item-icon"></i> Cerrar Sesión
-          </button>
-        </div>
+
+      <!-- Menú Desplegable -->
+      <!-- Quitamos el div intermedio y los mouseleave conflictivos -->
+      <mat-menu #userOptionsMenu="matMenu" class="app-menu-panel">
+        
+        <!-- Opción: Lista de Deseos -->
+        <button mat-menu-item routerLink="/mi-lista-deseos" class="app-menu-item">
+          <i class="bi bi-heart-fill app-menu-item-icon" style="color: #e91e63;"></i>
+          <span>Mi Lista de Deseos</span>
+        </button>
+
+        <!-- Opción: Mis Pedidos -->
+        <button mat-menu-item routerLink="/mis-pedidos" class="app-menu-item">
+          <i class="bi bi-receipt-fill app-menu-item-icon"></i>
+          <span>Mis Pedidos</span>
+        </button>
+
+        <!-- Opción: Admin (Solo si es admin) -->
+        <button mat-menu-item *ngIf="isAdmin$ | async" routerLink="/admin" class="app-menu-item">
+          <i class="bi bi-gear-fill app-menu-item-icon"></i>
+          <span>Admin</span>
+        </button>
+
+        <!-- Opción: Cerrar Sesión -->
+        <button mat-menu-item (click)="logout()" class="app-menu-item">
+          <i class="bi bi-box-arrow-right app-menu-item-icon"></i>
+          <span>Cerrar Sesión</span>
+        </button>
+        
       </mat-menu>
     </ng-container>
-
-    <!-- NUEVO: Botón de Lista de Deseos (Favoritos) -->
-    <button mat-button routerLink="/lista-deseos" class="navbar-nav-button icon-button">
-      <i class="bi bi-heart-fill navbar-nav-icon"></i>
-      <span class="icon-button-text">Favoritos</span>
-    </button>
 
     <!-- Botón del Carrito -->
     <button mat-button routerLink="/carrito"
