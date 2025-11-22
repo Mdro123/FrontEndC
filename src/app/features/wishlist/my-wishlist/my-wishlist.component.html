@@ -1,0 +1,34 @@
+<div class="wishlist-container">
+  <h1>Mi Lista de Deseos <mat-icon class="heart-icon">favorite</mat-icon></h1>
+
+  <div *ngIf="isLoading" class="loading-spinner">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando tus favoritos...</p>
+  </div>
+
+  <div *ngIf="!isLoading && wishlistItems.length === 0" class="empty-state">
+    <mat-icon class="empty-icon">favorite_border</mat-icon>
+    <p>Tu lista de deseos está vacía.</p>
+    <button mat-raised-button color="primary" routerLink="/">Explorar Libros</button>
+  </div>
+
+  <div *ngIf="!isLoading && wishlistItems.length > 0" class="wishlist-grid">
+    <mat-card class="wishlist-card" *ngFor="let item of wishlistItems">
+      <img mat-card-image [src]="item.imagenUrl || 'https://placehold.co/150x220'" alt="{{ item.titulo }}">
+      <mat-card-content>
+        <h3 class="card-title">{{ item.titulo }}</h3>
+        <p class="card-author">{{ item.autor }}</p>
+        <p class="card-price">{{ item.precio | currency:'S/.':'symbol':'1.2-2' }}</p>
+        <p class="card-date">Añadido el {{ item.addedAt | date:'shortDate' }}</p>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-icon-button color="warn" (click)="removeItem(item.productoId)" matTooltip="Eliminar de la lista">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-raised-button color="accent" (click)="addToCartFromWishlist(item)">
+          <mat-icon>add_shopping_cart</mat-icon> Mover al Carrito
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
