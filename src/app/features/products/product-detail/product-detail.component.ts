@@ -9,9 +9,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; // Importar SnackBar
+import { MatTooltipModule } from '@angular/material/tooltip'; // Importar Tooltip
 import { CartService } from '../../../services/cart.service';
 import { ChatbotService } from '../../../services/chatbot.service';
+import { WishlistService } from '../../../services/wishlist.service'; // Importar WishlistService
 
+// Registrar el local para Perú
 registerLocaleData(localeEsPe, 'es-PE');
 
 @Component({
@@ -19,7 +23,7 @@ registerLocaleData(localeEsPe, 'es-PE');
   standalone: true,
   imports: [
     CommonModule, RouterLink, MatCardModule, MatButtonModule,
-    MatIconModule, MatProgressSpinnerModule
+    MatIconModule, MatProgressSpinnerModule, MatSnackBarModule, MatTooltipModule
   ],
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.css']
@@ -33,7 +37,9 @@ export class ProductDetailComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private productService: ProductService,
     private cartService: CartService,
-    public chatbotService: ChatbotService
+    public chatbotService: ChatbotService,
+    private wishlistService: WishlistService, // Inyectar WishlistService
+    private snackBar: MatSnackBar // Inyectar SnackBar
   ) {}
 
   ngOnInit(): void {
@@ -63,27 +69,48 @@ export class ProductDetailComponent implements OnInit {
     );
   }
 
-  // --- MÉTODO CORREGIDO ---
+  // --- Método para añadir al carrito (CORREGIDO) ---
   addToCart(product: Product): void {
-    // Hay que suscribirse (.subscribe) para que la acción se ejecute
     this.cartService.addToCart(product).subscribe({
       next: () => {
-        // El éxito se maneja en el servicio (SnackBar)
+        // El éxito se maneja en el servicio (SnackBar) si está configurado allí,
+        // o puedes añadir tu propio mensaje aquí.
       },
       error: (err) => {
         console.error('Error al añadir al carrito desde detalle:', err);
+        this.snackBar.open('Error al añadir al carrito.', 'Cerrar', { duration: 3000 });
       }
     });
   }
-  // ------------------------
 
+  // --- Método para añadir a la lista de deseos (RECUPERADO) ---
+  addToWishlist(product: Product): void {
+    this.wishlistService.addToWishlist(product.id).subscribe({
+      next: () => {
+        this.snackBar.open(`¡"${product.titulo}" añadido a tu lista de deseos!`, 'Cerrar', { 
+          duration: 3000, 
+          panelClass: ['snackbar-success'] 
+        });
+      },
+      error: (err) => {
+        if (err.status === 403) {
+           this.snackBar.open('Debes iniciar sesión para guardar favoritos.', 'Cerrar', { duration: 4000 });
+        } else {
+           const msg = err.error || 'El libro ya está en tu lista o hubo un error.';
+           this.snackBar.open(msg, 'Cerrar', { duration: 3000 });
+        }
+      }
+    });
+  }
+
+  // --- Método de accesibilidad (Voz) (CORREGIDO) ---
   speakProductDetails(product: Product): void {
     if (!product) return;
 
     if (this.chatbotService.isSpeaking) {
       this.chatbotService.stopSpeaking();
     } else {
-      // Creamos la instancia manual del Pipe como acordamos para evitar errores de inyección
+      // Instancia manual para evitar el error de inyección
       const pipe = new CurrencyPipe('es-PE');
       const formattedPrice = pipe.transform(product.precio, 'S/.', 'symbol', '1.2-2');
       
