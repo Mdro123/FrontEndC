@@ -57,17 +57,107 @@
   </div>
 </mat-toolbar>
 
+<!-- =============================================== -->
+<!--      SECCIÓN PRINCIPAL CON DETALLE AGREGADO     -->
+<!-- =============================================== -->
+
 <div class="main-content">
-  <router-outlet></router-outlet>
+
+  <div class="product-detail-container">
+    
+    <div *ngIf="loading" class="loading-spinner">
+      <mat-spinner></mat-spinner>
+      <p>Cargando detalles del libro...</p>
+    </div>
+
+    <div *ngIf="errorMessage && !loading" class="error-message">
+      <p>{{ errorMessage }}</p>
+      <button mat-raised-button color="warn" routerLink="/">Volver a la lista</button>
+    </div>
+
+    <mat-card *ngIf="product$ | async as product; else loadingOrError" class="product-detail-card">
+      <div class="product-content">
+        
+        <div class="product-image-section">
+          <img [src]="product.imagenUrl || 'https://placehold.co/400x600/E0E0E0/212121?text=Sin+Portada'" 
+               [alt]="'Portada de ' + product.titulo" 
+               class="product-detail-image">
+        </div>
+
+        <div class="product-info-section">
+          <h2 class="product-detail-title">{{ product.titulo }}</h2>
+          <p class="product-detail-author"><strong>Autor:</strong> {{ product.autor }}</p>
+          <p class="product-detail-category"><strong>Categoría:</strong> {{ product.categoria.nombre }}</p>
+          <p class="product-detail-isbn"><strong>ISBN:</strong> {{ product.isbn }}</p>
+          <p class="product-detail-price"><strong>Precio:</strong> {{ product.precio | currency:'S/.':'symbol':'1.2-2' }}</p>
+          
+          <p class="product-detail-stock" 
+             [ngClass]="{'low-stock': product.stock <= 5 && product.stock > 0, 'no-stock': product.stock === 0}">
+            <strong>Stock:</strong> {{ product.stock === 0 ? 'Agotado' : product.stock }}
+          </p>
+          
+          <div class="product-detail-sinopsis-section">
+            <div class="sinopsis-header">
+              <h3>Sinopsis:</h3>
+              <button mat-icon-button 
+                      (click)="speakProductDetails(product)" 
+                      [color]="chatbotService.isSpeaking ? 'warn' : 'primary'"
+                      [attr.aria-label]="chatbotService.isSpeaking ? 'Detener lectura' : 'Escuchar detalles del producto'"
+                      matTooltip="Escuchar detalles">
+                <mat-icon *ngIf="!chatbotService.isSpeaking">volume_up</mat-icon>
+                <mat-icon *ngIf="chatbotService.isSpeaking">stop_circle</mat-icon>
+              </button>
+            </div>
+            <p class="product-detail-sinopsis">{{ product.sinopsis || 'Sinopsis no disponible.' }}</p>
+          </div>
+
+          <mat-card-actions class="product-detail-actions">
+            <button mat-raised-button color="primary" 
+                    [disabled]="product.stock === 0" 
+                    (click)="addToCart(product)">
+              <mat-icon>add_shopping_cart</mat-icon> Añadir al Carrito
+            </button>
+
+            <button mat-mini-fab color="warn" 
+                    (click)="addToWishlist(product)" 
+                    matTooltip="Añadir a Lista de Deseos" 
+                    aria-label="Añadir a lista de deseos">
+              <mat-icon>favorite</mat-icon>
+            </button>
+
+            <button mat-button routerLink="/">
+              <mat-icon>arrow_back</mat-icon> Volver a la Lista
+            </button>
+          </mat-card-actions>
+
+        </div>
+      </div>
+    </mat-card>
+
+    <ng-template #loadingOrError>
+      <div *ngIf="!loading && !errorMessage" class="no-content">
+        <p>No se pudo cargar el libro.</p>
+      </div>
+    </ng-template>
+  </div>
+
 </div>
+
+<!-- =============================================== -->
 
 <footer class="app-footer">
   <div class="footer-content">
     <p>&copy; 2025 Librería Crisol. Todos los derechos reservados.</p>
     <div class="footer-social-icons">
-      <a href="https://www.facebook.com/libreriascrisol.paginaoficial" target="_blank" class="social-icon" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-      <a href="https://twitter.com/LibreriasCrisol" target="_blank" class="social-icon" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
-      <a href="https://www.instagram.com/libreriascrisol" target="_blank" class="social-icon" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+      <a href="https://www.facebook.com/libreriascrisol.paginaoficial" target="_blank" class="social-icon" aria-label="Facebook">
+        <i class="bi bi-facebook"></i>
+      </a>
+      <a href="https://twitter.com/LibreriasCrisol" target="_blank" class="social-icon" aria-label="Twitter">
+        <i class="bi bi-twitter"></i>
+      </a>
+      <a href="https://www.instagram.com/libreriascrisol" target="_blank" class="social-icon" aria-label="Instagram">
+        <i class="bi bi-instagram"></i>
+      </a>
     </div>
   </div>
 </footer>
