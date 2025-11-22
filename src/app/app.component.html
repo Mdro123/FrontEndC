@@ -30,14 +30,22 @@
         <i class="bi bi-person-fill navbar-nav-icon"></i>
         <span class="icon-button-text">Hola, {{ (currentUser$ | async)?.nombres }}</span>
       </button>
+
       <mat-menu #userOptionsMenu="matMenu" (mouseleave)="userOptionsTrigger.closeMenu()" class="app-menu-panel">
         <div (mouseleave)="userOptionsTrigger.closeMenu()">
+          
+          <button mat-menu-item routerLink="/mi-lista-deseos" class="app-menu-item">
+            <i class="bi bi-heart-fill app-menu-item-icon"></i> Mi Lista de Deseos
+          </button>
+
           <button mat-menu-item routerLink="/mis-pedidos" class="app-menu-item">
             <i class="bi bi-receipt-fill app-menu-item-icon"></i> Mis Pedidos
           </button>
+
           <button mat-menu-item *ngIf="isAdmin$ | async" routerLink="/admin" class="app-menu-item">
             <i class="bi bi-gear-fill app-menu-item-icon"></i> Admin
           </button>
+
           <button mat-menu-item (click)="logout()" class="app-menu-item">
             <i class="bi bi-box-arrow-right app-menu-item-icon"></i> Cerrar Sesión
           </button>
@@ -57,19 +65,13 @@
   </div>
 </mat-toolbar>
 
-<!-- =============================================== -->
-<!--      SECCIÓN PRINCIPAL CON DETALLE AGREGADO     -->
-<!-- =============================================== -->
-
 <div class="main-content">
-
   <div class="product-detail-container">
-    
     <div *ngIf="loading" class="loading-spinner">
       <mat-spinner></mat-spinner>
       <p>Cargando detalles del libro...</p>
     </div>
-
+    
     <div *ngIf="errorMessage && !loading" class="error-message">
       <p>{{ errorMessage }}</p>
       <button mat-raised-button color="warn" routerLink="/">Volver a la lista</button>
@@ -140,10 +142,7 @@
       </div>
     </ng-template>
   </div>
-
 </div>
-
-<!-- =============================================== -->
 
 <footer class="app-footer">
   <div class="footer-content">
