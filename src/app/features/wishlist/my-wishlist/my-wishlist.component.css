@@ -4,6 +4,7 @@
   margin: 0 auto;
 }
 
+/* Título con el corazón */
 h1 {
   text-align: center;
   color: #3f51b5;
@@ -15,60 +16,123 @@ h1 {
 }
 
 .heart-icon {
-  color: #e91e63; /* Color rosa/rojo para el corazón */
+  color: #e91e63; /* Color rosa para el título */
 }
 
+/* --- Grid Layout (Cuadrícula) --- */
 .wishlist-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
 }
 
+/* --- Tarjeta --- */
 .wishlist-card {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 12px;
+  overflow: hidden; /* Para que la imagen respete el borde */
 }
 
 .wishlist-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
 }
 
 .wishlist-card img {
-  height: 200px;
+  height: 220px;
   object-fit: contain;
-  padding: 15px;
-  background-color: #f9f9f9;
+  padding: 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer; /* Indica que se puede hacer clic para ver detalle */
 }
 
+.wishlist-card mat-card-content {
+  padding: 16px;
+  flex-grow: 1;
+}
+
+/* Tipografía */
 .card-title {
   font-size: 1.1em;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   line-height: 1.3;
+  color: #333;
 }
 
 .card-author {
   color: #666;
-  font-size: 0.9em;
-  margin-bottom: 5px;
+  font-size: 0.95em;
+  margin-bottom: 8px;
 }
 
 .card-price {
-  font-size: 1.2em;
+  font-size: 1.3em;
   color: #2e7d32;
   font-weight: bold;
+  margin-top: 10px;
 }
 
 .card-date {
   font-size: 0.8em;
-  color: #999;
-  margin-top: 10px;
+  color: #bbb;
+  margin-top: 15px;
+  display: block;
 }
 
+/* --- BOTONES Y ACCIONES (Diseño Limpio) --- */
+
+.wishlist-actions {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px solid #f9f9f9;
+  background-color: #fff;
+}
+
+/* 1. Botón Añadir al Carrito */
+.btn-add-cart {
+  flex: 1; /* Ocupa todo el espacio disponible */
+  height: 42px; /* Altura fija */
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-add-cart mat-icon {
+  margin-right: 5px;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* 2. Botón Eliminar (Circular) */
+.action-icon-button {
+  width: 42px;  /* Mismo ancho que altura */
+  height: 42px; /* Misma altura que el otro botón */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #e0e0e0;
+  border-radius: 50%; /* Círculo perfecto */
+  transition: background-color 0.2s, border-color 0.2s;
+  flex-shrink: 0; /* No permitimos que se encoja */
+}
+
+.action-icon-button:hover {
+  background-color: #fff5f5; /* Fondo rojo muy suave */
+  border-color: #ffcdd2;
+}
+
+/* --- Loading y Empty States --- */
 .empty-state {
   text-align: center;
   padding: 50px;
@@ -79,7 +143,7 @@ h1 {
   font-size: 80px;
   height: 80px;
   width: 80px;
-  color: #ddd;
+  color: #e0e0e0;
   margin-bottom: 20px;
 }
 
