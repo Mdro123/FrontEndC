@@ -16,7 +16,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { CartService } from '../../../services/cart.service';
 import { CategoryService } from '../../../services/category.service';
 import { Category } from '../../../models/category.model';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar'; // Importamos Config
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar'; 
 import { ChatbotService } from '../../../services/chatbot.service'; 
 
 @Component({
@@ -153,33 +153,32 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.searchSubject.next(this.searchTerm);
   }
 
-  // --- MÉTODO MODIFICADO: AÑADIR AL CARRITO ---
+  // --- AÑADIR AL CARRITO ---
   addToCart(product: Product): void {
-    // 1. Llamamos al servicio con 'false' para silenciar el mensaje negro por defecto
+    // 1. Llamada silenciosa al servicio
     this.cartService.addToCart(product, 1, false).subscribe({
       next: () => {
-        // 2. Mostramos nuestra propia notificación personalizada
+        // 2. Mostramos notificación personalizada sin botón
         this.showCustomNotification(product.titulo);
       },
       error: (err) => {
-        // En caso de error, dejamos que el servicio o un mensaje estándar avise
         console.error('Error al añadir producto:', err);
         this.snackBar.open('No se pudo añadir al carrito.', 'Cerrar', { duration: 3000 });
       }
     });
   }
 
-  // Método auxiliar para configurar y mostrar el SnackBar personalizado
+  // --- MÉTODO CORREGIDO: Sin botón de cerrar ---
   private showCustomNotification(productTitle: string): void {
     const config: MatSnackBarConfig = {
-      duration: 3000,
-      horizontalPosition: 'right', // Derecha
-      verticalPosition: 'bottom',  // Abajo
-      panelClass: ['custom-cart-toast'] // Clase CSS definida para fondo blanco
+      duration: 2500, // Duración en milisegundos (2.5 segundos)
+      horizontalPosition: 'right', 
+      verticalPosition: 'bottom',  
+      panelClass: ['custom-cart-toast']
     };
 
-    // Mensaje con icono (usamos emoji o texto simple, ya que snackbar admite texto)
-    this.snackBar.open(`✅ "${productTitle}" añadido al carrito`, 'Cerrar', config);
+    // Al pasar 'undefined' como segundo parámetro, NO se crea el botón de acción
+    this.snackBar.open(`✅ "${productTitle}" añadido al carrito`, undefined, config);
   }
 
   loadTopSellingProducts(): void {
