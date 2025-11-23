@@ -2,20 +2,20 @@
   <h2>Tu Carrito de Compras</h2>
 
   <ng-container *ngIf="cartItems$ | async as cartItems">
-    <!-- Mensaje para Carrito Vacío -->
+    
     <div *ngIf="cartItems.length === 0" class="empty-cart-message">
       <mat-icon>shopping_cart</mat-icon>
       <p>Tu carrito está vacío.</p>
       <button mat-raised-button color="primary" routerLink="/">Explorar Libros</button>
     </div>
 
-    <!-- Contenido del Carrito (Lista y Resumen) -->
     <div *ngIf="cartItems.length > 0" class="cart-content">
 
-      <!-- Lista de Productos en el Carrito -->
       <div class="cart-items-list">
         <mat-card class="cart-item-card" *ngFor="let item of cartItems">
-          <img [src]="item.imagenUrl || 'https://placehold.co/100x150/E0E0E0/212121?text=Sin+Portada'" alt="Portada de {{ item.titulo }}" class="cart-item-image">
+          <img [src]="item.imagenUrl || 'https://placehold.co/100x150/E0E0E0/212121?text=Sin+Portada'" 
+               alt="Portada de {{ item.titulo }}" 
+               class="cart-item-image">
 
           <div class="cart-item-details">
             <h3>{{ item.titulo }}</h3>
@@ -39,7 +39,6 @@
         </mat-card>
       </div>
 
-      <!-- Resumen del Carrito -->
       <mat-card class="cart-summary-card">
         <h3>Resumen del Carrito</h3>
         <p>Total de ítems: <span>{{ (cartItemCount$ | async) || 0 }}</span></p>
