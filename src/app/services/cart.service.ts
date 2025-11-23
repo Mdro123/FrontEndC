@@ -1,7 +1,7 @@
 // src/app/services/cart.service.ts
 
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
 import { map, switchMap, catchError, tap } from 'rxjs/operators';
 import { CartItem, Product } from '../models/product.model';
 import { HttpClient } from '@angular/common/http';
@@ -19,7 +19,7 @@ export class CartService {
   private cartKey = 'shopping_cart';
   // --- Usar la URL base del entorno ---
   private baseUrl = environment.apiUrl;
-  private apiUrl = `${this.baseUrl}/carrito`; // Endpoint de tu CarritoController
+  private apiUrl = `${this.baseUrl}/carrito`; 
   // ------------------------------------
 
   private cartSubject: BehaviorSubject<CartItem[]>;
@@ -59,8 +59,6 @@ export class CartService {
 
   /**
    * Valida el carrito actual del frontend con el backend y actualiza el carrito local.
-   * Muestra mensajes de error si hay problemas de stock o precio.
-   * @returns Observable<CarritoValidacionResponse>
    */
   validateCartWithBackend(): Observable<CarritoValidacionResponse> {
     const itemsToValidate = this.currentCartValue.map(item => ({
@@ -95,13 +93,13 @@ export class CartService {
                 newCart.push(originalItem);
                 needsUpdate = true;
               } else {
-                  newCart.push({
+                 newCart.push({
                    ...originalItem,
                    precio: validatedItem.precioUnitario,
                    stock: validatedItem.cantidadDisponible,
                    quantity: validatedItem.cantidadSolicitada
-                  });
-                  needsUpdate = true;
+                 });
+                 needsUpdate = true;
               }
             }
           } else if (!validatedItem.valido && !originalItem) {
@@ -126,10 +124,10 @@ export class CartService {
   /**
    * Añade un producto al carrito, validando con el backend.
    * @param product El producto a añadir.
-   * @param quantity La cantidad a añadir.
-   * @returns Observable<void> que indica éxito o fallo.
+   * @param quantity La cantidad a añadir (por defecto 1).
+   * @param mostrarMensaje Si es true muestra SnackBar, si es false es silencioso.
    */
-  addToCart(product: Product, quantity: number = 1): Observable<void> {
+  addToCart(product: Product, quantity: number = 1, mostrarMensaje: boolean = true): Observable<void> {
     const currentCart = this.currentCartValue;
     const existingItem = currentCart.find(item => item.id === product.id);
 
@@ -157,9 +155,18 @@ export class CartService {
           } else {
             newCart = [...currentCart, { ...product, quantity: validatedItem.cantidadSolicitada, precio: validatedItem.precioUnitario, stock: validatedItem.cantidadDisponible }];
           }
+          
+          // Actualizamos el estado del carrito
           this.updateCart(newCart);
-          this.snackBar.open(`"${product.titulo}" añadido al carrito.`, 'Ok', { duration: 2000, panelClass: ['snackbar-success'] });
+          
+          // --- CAMBIO AQUÍ: Solo mostramos el mensaje si mostrarMensaje es true ---
+          if (mostrarMensaje) {
+            this.snackBar.open(`"${product.titulo}" añadido al carrito.`, 'Ok', { duration: 2000, panelClass: ['snackbar-success'] });
+          }
+          // -----------------------------------------------------------------------
+
         } else if (validatedItem && !validatedItem.valido) {
+          // Los errores SIEMPRE los mostramos, aunque esté en modo silencioso, porque el usuario debe saber si falló
           this.snackBar.open(`¡Error! "${product.titulo}": ${validatedItem.mensaje}`, 'Cerrar', { duration: 4000, panelClass: ['snackbar-error'] });
           throw new Error(validatedItem.mensaje);
         } else {
@@ -207,6 +214,7 @@ export class CartService {
                     item.id === productId ? { ...item, quantity: validatedItem.cantidadSolicitada, precio: validatedItem.precioUnitario, stock: validatedItem.cantidadDisponible } : item
                 );
                 this.updateCart(newCart);
+                // Opcional: Podrías hacer lo mismo aquí con un parámetro extra si quisieras silenciar actualizaciones de cantidad
                 this.snackBar.open(`Cantidad de "${validatedItem.titulo}" actualizada.`, 'Ok', { duration: 2000, panelClass: ['snackbar-success'] });
             } else if (validatedItem && !validatedItem.valido) {
                 this.snackBar.open(`¡Error! "${validatedItem.titulo}": ${validatedItem.mensaje}`, 'Cerrar', { duration: 4000, panelClass: ['snackbar-error'] });
