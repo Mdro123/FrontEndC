@@ -57,12 +57,16 @@
           </button>
 
           <button mat-icon-button
-                  color="warn"
-                  class="action-icon-button"
-                  (click)="addToWishlist(product)"
-                  matTooltip="Añadir a Lista de Deseos"
-                  aria-label="Añadir a lista de deseos">
-             <mat-icon>favorite_border</mat-icon>
+                  class="action-icon-button wishlist-btn"
+                  [ngClass]="{'active-wishlist': isInWishlist}"
+                  (click)="toggleWishlist(product)"
+                  [matTooltip]="isInWishlist ? 'Eliminar de Lista de Deseos' : 'Añadir a Lista de Deseos'"
+                  [attr.aria-label]="isInWishlist ? 'Eliminar de lista de deseos' : 'Añadir a lista de deseos'">
+             
+             <i class="bi" 
+                [class.bi-suit-heart-fill]="isInWishlist" 
+                [class.bi-suit-heart]="!isInWishlist">
+             </i>
           </button>
 
           <button mat-icon-button 
