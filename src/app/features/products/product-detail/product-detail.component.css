@@ -9,19 +9,20 @@
   background-color: #f0f2f5;
 }
 
-.sinopsis-header {
-  display: flex;
-  align-items: center;
-  gap: 8px; /* Espacio entre el título y el botón */
-  margin-bottom: 10px;
+/* --- Spinner y Mensajes de Error --- */
+.loading-spinner, .error-message, .no-content {
+  text-align: center;
+  padding: 50px;
+  color: #555;
+  width: 100%;
 }
 
-.sinopsis-header h3 {
-  margin: 0; /* Quita el margen por defecto del h3 */
-  font-size: 1.3em;
-  color: #333;
+.error-message {
+  color: red;
+  font-weight: bold;
 }
 
+/* --- Tarjeta Principal --- */
 .product-detail-card {
   max-width: 900px;
   width: 100%;
@@ -39,6 +40,7 @@
   gap: 20px;
 }
 
+/* --- Sección de Imagen --- */
 .product-image-section {
   flex: 1;
   display: flex;
@@ -55,6 +57,7 @@
   mix-blend-mode: multiply;
 }
 
+/* --- Sección de Información --- */
 .product-info-section {
   flex: 2;
   padding: 10px;
@@ -94,16 +97,24 @@
   font-weight: bold;
 }
 
+/* --- Sección de Sinopsis --- */
 .product-detail-sinopsis-section {
   margin-top: 20px;
   border-top: 1px solid #eee;
   padding-top: 15px;
 }
 
-.product-detail-sinopsis-section h3 {
+.sinopsis-header {
+  display: flex;
+  align-items: center;
+  gap: 8px; 
+  margin-bottom: 10px;
+}
+
+.sinopsis-header h3 {
+  margin: 0;
   font-size: 1.3em;
   color: #333;
-  margin-bottom: 10px;
 }
 
 .product-detail-sinopsis {
@@ -113,29 +124,38 @@
   text-align: justify;
 }
 
+/* --- Botones y Acciones (MODIFICADO PARA ESTILO LIMPIO) --- */
 .product-detail-actions {
   margin-top: 20px;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   justify-content: flex-start;
+  align-items: center; /* Alineación vertical centrada */
   padding: 0;
 }
 
-.product-detail-actions button {
+/* Aplica ancho mínimo SOLO a los botones normales (Carrito y Volver).
+   Excluye el botón de icono (.wishlist-icon-button) para que no se estire.
+*/
+.product-detail-actions button:not(.wishlist-icon-button) {
   min-width: 150px;
 }
 
-.loading-spinner, .error-message, .no-content {
-  text-align: center;
-  padding: 50px;
-  color: #555;
-  width: 100%;
+/* Estilo específico para el botón de corazón limpio */
+.product-detail-actions .wishlist-icon-button {
+  min-width: auto;   /* Resetea el ancho */
+  width: 40px;       /* Tamaño estándar de icono */
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 5px;
 }
 
-.error-message {
-  color: red;
-  font-weight: bold;
+/* Opcional: Efecto al pasar el mouse sobre el corazón */
+.product-detail-actions .wishlist-icon-button:hover {
+  background-color: rgba(233, 30, 99, 0.08); /* Fondo rosado muy suave */
 }
 
 /* --- Diseño Responsivo --- */
@@ -152,10 +172,18 @@
   .product-detail-title {
     font-size: 1.8em;
   }
+  
   .product-detail-actions {
-    justify-content: center;
+    justify-content: center; /* Centrar botones en móviles */
   }
-  .product-detail-actions button {
+  
+  /* En móvil, los botones de texto ocupan todo el ancho */
+  .product-detail-actions button:not(.wishlist-icon-button) {
     width: 100%;
+  }
+
+  /* El icono se queda normal, alineado al centro o abajo según flex */
+  .product-detail-actions .wishlist-icon-button {
+    margin: 10px 0; /* Un poco de espacio vertical en móvil */
   }
 }
