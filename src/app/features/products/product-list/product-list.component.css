@@ -48,14 +48,32 @@
 .search-bar { margin-bottom: 0; }
 .full-width-search { width: 100%; max-width: none; }
 
-/* --- Estilos para el Banner Principal --- */
+/* ==========================================================================
+   FIX: BANNER PRINCIPAL DE ANCHO COMPLETO (EXTREMO A EXTREMO)
+   ==========================================================================
+*/
 #carouselExampleSlidesOnly {
-  width: 100%;
+  width: 100vw; /* 100% del ancho de la ventana del navegador */
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw; /* Truco para centrar y estirar fuera del contenedor padre */
+  margin-right: -50vw;
   margin-top: 24px;
+  overflow: hidden; /* Evita scroll horizontal innecesario */
 }
+
+#carouselExampleSlidesOnly .carousel-inner {
+  width: 100%;
+}
+
 #carouselExampleSlidesOnly img {
-  max-height: 450px;
-  object-fit: cover;
+  width: 100%;
+  height: auto;      /* La altura se ajusta al ancho */
+  min-height: 200px; /* Altura mínima para móviles */
+  max-height: 450px; /* Altura máxima para pantallas grandes */
+  object-fit: cover; /* Cubre el área sin deformarse */
+  display: block;
 }
 
 /* --- Contenedor Principal --- */
@@ -278,6 +296,9 @@
   .promo-section { grid-template-columns: 1fr; }
 }
 @media (max-width: 768px) {
+  /* Ajuste del banner en móviles */
+  #carouselExampleSlidesOnly img { max-height: 250px; }
+  
   .product-grid { grid-template-columns: repeat(1, 1fr); }
   .top-selling-grid { grid-template-columns: repeat(2, 1fr); }
   .page-content-wrapper { padding: 16px; }
@@ -288,33 +309,33 @@
 }
 
 /* ==========================================================================
-   ESTILOS CORREGIDOS PARA LA NOTIFICACIÓN (TOAST)
+   ESTILOS PARA LA NOTIFICACIÓN (TOAST) PERSONALIZADA
    ==========================================================================
 */
 
 /* 1. Definimos las variables de color del componente MDC */
 ::ng-deep .custom-cart-toast {
-  --mdc-snackbar-container-color: #ffffff;      /* Variable oficial de Material para fondo */
-  --mdc-snackbar-supporting-text-color: #333333; /* Variable para texto */
-  --mat-snack-bar-button-color: #3f51b5;         /* Variable para botones */
+  --mdc-snackbar-container-color: #ffffff;      /* Fondo Blanco */
+  --mdc-snackbar-supporting-text-color: #333333; /* Texto Oscuro */
+  --mat-snack-bar-button-color: #3f51b5;         /* Botones Azul */
 }
 
-/* 2. Forzamos la superficie interna (esto arregla el fondo oscuro) */
+/* 2. Forzamos la superficie interna (arregla fondo oscuro por defecto) */
 ::ng-deep .custom-cart-toast .mdc-snackbar__surface {
   background-color: #ffffff !important;
-  border-left: 6px solid #3f51b5 !important; /* Decoración azul a la izquierda */
+  border-left: 6px solid #3f51b5 !important; /* Decoración azul lateral */
   box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
   border-radius: 8px !important;
 }
 
-/* 3. Forzamos el color del texto (esto arregla la letra que no se ve) */
+/* 3. Forzamos el color del texto (arregla letra invisible) */
 ::ng-deep .custom-cart-toast .mat-mdc-snack-bar-label {
-  color: #333333 !important; /* Texto gris oscuro/negro */
+  color: #333333 !important; /* Gris oscuro casi negro */
   font-weight: 500 !important;
   font-size: 1rem !important;
 }
 
-/* 4. Estilo para el botón de acción (Cerrar/X) */
+/* 4. Estilo por si hubiera botones de acción (aunque lo quitamos en TS) */
 ::ng-deep .custom-cart-toast .mat-mdc-snack-bar-actions .mat-mdc-snack-bar-action {
   color: #666666 !important;
 }
