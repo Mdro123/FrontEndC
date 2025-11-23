@@ -45,6 +45,10 @@ export class ProductDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // --- CORRECCIÓN AQUÍ: Forzar el scroll al inicio de la página ---
+    window.scrollTo(0, 0); 
+    // ----------------------------------------------------------------
+
     this.product$ = this.activatedRoute.paramMap.pipe(
       tap(() => { this.loading = true; this.errorMessage = null; }),
       switchMap(params => {
@@ -86,7 +90,7 @@ export class ProductDetailComponent implements OnInit {
 
   toggleWishlist(product: Product): void {
     if (this.isInWishlist) {
-      // Eliminar (se queda en la misma página)
+      // Eliminar
       this.wishlistService.removeFromWishlist(product.id).subscribe({
         next: () => {
           this.isInWishlist = false; 
@@ -116,17 +120,14 @@ export class ProductDetailComponent implements OnInit {
     }
   }
 
-  // --- MÉTODO MODIFICADO: AÑADIR AL CARRITO ---
+  // --- Añadir al Carrito: Silencioso y Redirecciona ---
   addToCart(product: Product): void {
-    // Parámetros: Producto, Cantidad (1), MostrarMensaje (false)
     this.cartService.addToCart(product, 1, false).subscribe({
       next: () => {
-        // Éxito silencioso -> Redireccionar al Carrito
         this.router.navigate(['/carrito']);
       },
       error: (err) => {
         console.error('Error al añadir al carrito:', err);
-        // Si hay error, sí mostramos el mensaje para avisar
         this.snackBar.open('Error al añadir al carrito.', 'Cerrar', { duration: 3000 });
       }
     });
