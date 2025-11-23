@@ -124,38 +124,44 @@
   text-align: justify;
 }
 
-/* --- Botones y Acciones (MODIFICADO PARA ESTILO LIMPIO) --- */
+/* --- BOTONES Y ACCIONES (Alineación Perfecta) --- */
+
 .product-detail-actions {
   margin-top: 20px;
   display: flex;
+  /* Esto es clave: alinea verticalmente al centro todos los botones */
+  align-items: center; 
   flex-wrap: wrap;
-  gap: 10px;
-  justify-content: flex-start;
-  align-items: center; /* Alineación vertical centrada */
+  gap: 12px; /* Espacio uniforme entre botones */
   padding: 0;
 }
 
-/* Aplica ancho mínimo SOLO a los botones normales (Carrito y Volver).
-   Excluye el botón de icono (.wishlist-icon-button) para que no se estire.
-*/
-.product-detail-actions button:not(.wishlist-icon-button) {
-  min-width: 150px;
+/* Estilo para el botón principal (Carrito) */
+.btn-add-cart {
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  height: 42px; /* Altura fija para asegurar consistencia */
+  font-size: 1rem;
 }
 
-/* Estilo específico para el botón de corazón limpio */
-.product-detail-actions .wishlist-icon-button {
-  min-width: auto;   /* Resetea el ancho */
-  width: 40px;       /* Tamaño estándar de icono */
-  height: 40px;
+.btn-add-cart mat-icon {
+  margin-right: 8px;
+}
+
+/* Estilo compartido para los botones de ícono (Wishlist y Volver) */
+.action-icon-button {
+  width: 42px;  /* Mismo ancho que altura */
+  height: 42px; /* Misma altura que el botón del carrito */
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: 5px;
+  border: 1px solid #e0e0e0; /* Opcional: un borde sutil circular */
+  border-radius: 50%; /* Hace que sean círculos perfectos */
+  transition: background-color 0.2s;
 }
 
-/* Opcional: Efecto al pasar el mouse sobre el corazón */
-.product-detail-actions .wishlist-icon-button:hover {
-  background-color: rgba(233, 30, 99, 0.08); /* Fondo rosado muy suave */
+.action-icon-button:hover {
+  background-color: #f5f5f5;
 }
 
 /* --- Diseño Responsivo --- */
@@ -174,16 +180,17 @@
   }
   
   .product-detail-actions {
-    justify-content: center; /* Centrar botones en móviles */
+    justify-content: center; /* Centrar en móviles */
   }
   
-  /* En móvil, los botones de texto ocupan todo el ancho */
-  .product-detail-actions button:not(.wishlist-icon-button) {
-    width: 100%;
+  /* En móviles, quizás quieras que el botón de comprar ocupe todo el ancho */
+  .btn-add-cart {
+    flex: 1 1 100%; /* Ocupa todo el ancho */
+    margin-bottom: 10px;
   }
 
-  /* El icono se queda normal, alineado al centro o abajo según flex */
-  .product-detail-actions .wishlist-icon-button {
-    margin: 10px 0; /* Un poco de espacio vertical en móvil */
+  /* Los íconos se quedan abajo en una fila */
+  .action-icon-button {
+    border: none; /* En móvil quitamos bordes si prefieres */
   }
 }
