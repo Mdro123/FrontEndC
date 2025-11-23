@@ -15,7 +15,6 @@
 
   <div class="navbar-right-section">
     
-    <!-- Bloque NO Logueado -->
     <ng-container *ngIf="(isLoggedIn$ | async) === false">
       <button mat-button routerLink="/login" class="navbar-nav-button icon-button">
         <i class="bi bi-person navbar-nav-icon"></i>
@@ -23,10 +22,8 @@
       </button>
     </ng-container>
 
-    <!-- Bloque Logueado -->
     <ng-container *ngIf="(isLoggedIn$ | async) === true">
       
-      <!-- Botón que abre el menú -->
       <button mat-button
               [matMenuTriggerFor]="userOptionsMenu"
               class="navbar-nav-button icon-button">
@@ -34,29 +31,23 @@
         <span class="icon-button-text">Hola, {{ (currentUser$ | async)?.nombres }}</span>
       </button>
 
-      <!-- Menú Desplegable -->
-      <!-- Quitamos el div intermedio y los mouseleave conflictivos -->
       <mat-menu #userOptionsMenu="matMenu" class="app-menu-panel">
         
-        <!-- Opción: Lista de Deseos -->
         <button mat-menu-item routerLink="/mi-lista-deseos" class="app-menu-item">
-          <i class="bi bi-heart-fill app-menu-item-icon" style="color: #e91e63;"></i>
+          <i class="bi bi-suit-heart app-menu-item-icon"></i>
           <span>Mi Lista de Deseos</span>
         </button>
 
-        <!-- Opción: Mis Pedidos -->
         <button mat-menu-item routerLink="/mis-pedidos" class="app-menu-item">
-          <i class="bi bi-receipt-fill app-menu-item-icon"></i>
+          <i class="bi bi-bag-check app-menu-item-icon"></i>
           <span>Mis Pedidos</span>
         </button>
 
-        <!-- Opción: Admin (Solo si es admin) -->
         <button mat-menu-item *ngIf="isAdmin$ | async" routerLink="/admin" class="app-menu-item">
           <i class="bi bi-gear-fill app-menu-item-icon"></i>
           <span>Admin</span>
         </button>
 
-        <!-- Opción: Cerrar Sesión -->
         <button mat-menu-item (click)="logout()" class="app-menu-item">
           <i class="bi bi-box-arrow-right app-menu-item-icon"></i>
           <span>Cerrar Sesión</span>
@@ -65,7 +56,6 @@
       </mat-menu>
     </ng-container>
 
-    <!-- Botón del Carrito -->
     <button mat-button routerLink="/carrito"
             [matBadge]="cartItemCount$ | async"
             [matBadgeHidden]="(cartItemCount$ | async) === 0"
