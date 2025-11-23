@@ -51,7 +51,7 @@ export class MyWishlistComponent implements OnInit {
     });
   }
 
-  // Eliminar (Silencioso)
+  // --- Eliminar (Silencioso) ---
   removeItem(productId: number): void {
     this.wishlistService.removeFromWishlist(productId).subscribe({
       next: () => {
@@ -64,8 +64,9 @@ export class MyWishlistComponent implements OnInit {
     });
   }
 
-  // --- AÑADIR CON SCROLL Y FOCO ---
+  // --- AÑADIR AL CARRITO (UX MEJORADO: Scroll + Focus + Sin Mensaje) ---
   addToCartFromWishlist(item: WishlistItem): void {
+    // 1. Crear objeto compatible
     const productMock: any = {
       id: item.productoId,
       titulo: item.titulo,
@@ -77,22 +78,22 @@ export class MyWishlistComponent implements OnInit {
       sinopsis: ''
     };
 
-    this.cartService.addToCart(productMock).subscribe({
+    // 2. Llamar al servicio
+    // Parámetros: (Producto, Cantidad, MostrarMensaje)
+    // Pasamos 1 como cantidad y 'false' para ocultar el SnackBar negro
+    this.cartService.addToCart(productMock, 1, false).subscribe({
       next: () => {
-        // 1. Ya NO mostramos el SnackBar.
         
-        // 2. Scroll suave hacia arriba
+        // A. Scroll suave al inicio
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        // 3. Enfocar el botón del carrito
-        // Usamos un pequeño Timeout para dar tiempo a que empiece el scroll
+        // B. Enfocar carrito
         setTimeout(() => {
-          // Buscamos el botón por su atributo routerLink="/carrito" que definiste en el Navbar
           const cartButton = document.querySelector('button[routerLink="/carrito"]') as HTMLElement;
           if (cartButton) {
-            cartButton.focus(); // Esto pone el "anillo" de selección (Tab)
+            cartButton.focus(); // Resalta el botón (anillo de foco)
           }
-        }, 100);
+        }, 300);
       },
       error: (err) => {
         console.error('Error al añadir al carrito', err);
