@@ -9,13 +9,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; // Importar SnackBar
-import { MatTooltipModule } from '@angular/material/tooltip'; // Importar Tooltip
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; 
+import { MatTooltipModule } from '@angular/material/tooltip'; 
 import { CartService } from '../../../services/cart.service';
 import { ChatbotService } from '../../../services/chatbot.service';
-import { WishlistService } from '../../../services/wishlist.service'; // Importar WishlistService
+import { WishlistService } from '../../../services/wishlist.service'; 
 
-// Registrar el local para Perú
 registerLocaleData(localeEsPe, 'es-PE');
 
 @Component({
@@ -32,14 +31,17 @@ export class ProductDetailComponent implements OnInit {
   product$: Observable<Product | null> | null = null;
   loading: boolean = true;
   errorMessage: string | null = null;
+  
+  // Nueva variable para controlar el estado visual del corazón
+  isInWishlist: boolean = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private productService: ProductService,
     private cartService: CartService,
     public chatbotService: ChatbotService,
-    private wishlistService: WishlistService, // Inyectar WishlistService
-    private snackBar: MatSnackBar // Inyectar SnackBar
+    private wishlistService: WishlistService, 
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -58,6 +60,9 @@ export class ProductDetailComponent implements OnInit {
         this.loading = false;
         if (!product) {
           this.errorMessage = 'Libro no encontrado.';
+        } else {
+          // Una vez cargado el libro, verificamos si ya está en favoritos
+          this.checkWishlistStatus(product.id);
         }
       }),
       catchError((err: any) => {
@@ -69,48 +74,73 @@ export class ProductDetailComponent implements OnInit {
     );
   }
 
-  // --- Método para añadir al carrito (CORREGIDO) ---
+  // --- Verificar si el producto está en la lista ---
+  checkWishlistStatus(productId: number): void {
+    this.wishlistService.getMyWishlist().subscribe({
+      next: (items) => {
+        // Revisamos si algún ítem de la lista coincide con el ID del producto actual
+        // Basado en tu modelo WishlistItem que tiene 'productoId'
+        this.isInWishlist = items.some(item => item.productoId === productId);
+      },
+      error: () => {
+        // Si hay error (ej. no logueado), asumimos que no está en la lista
+        this.isInWishlist = false;
+      }
+    });
+  }
+
+  // --- Método Toggle: Añadir o Quitar ---
+  toggleWishlist(product: Product): void {
+    if (this.isInWishlist) {
+      // Si ya está, lo eliminamos
+      this.wishlistService.removeFromWishlist(product.id).subscribe({
+        next: () => {
+          this.isInWishlist = false; // Actualizamos visualmente a vacío
+          this.snackBar.open('Eliminado de tu lista de deseos', 'Cerrar', { duration: 2000 });
+        },
+        error: (err) => {
+          console.error(err);
+          this.snackBar.open('Error al eliminar de favoritos', 'Cerrar', { duration: 3000 });
+        }
+      });
+    } else {
+      // Si no está, lo agregamos
+      this.wishlistService.addToWishlist(product.id).subscribe({
+        next: () => {
+          this.isInWishlist = true; // Actualizamos visualmente a lleno/rojo
+          this.snackBar.open(`¡"${product.titulo}" añadido a favoritos!`, 'Cerrar', { 
+            duration: 3000, 
+            panelClass: ['snackbar-success'] 
+          });
+        },
+        error: (err) => {
+          if (err.status === 403) {
+             this.snackBar.open('Inicia sesión para guardar favoritos.', 'Cerrar', { duration: 4000 });
+          } else {
+             const msg = err.error || 'Error al añadir a favoritos.';
+             this.snackBar.open(msg, 'Cerrar', { duration: 3000 });
+          }
+        }
+      });
+    }
+  }
+
   addToCart(product: Product): void {
     this.cartService.addToCart(product).subscribe({
-      next: () => {
-        // El éxito se maneja en el servicio (SnackBar) si está configurado allí,
-        // o puedes añadir tu propio mensaje aquí.
-      },
+      next: () => {},
       error: (err) => {
-        console.error('Error al añadir al carrito desde detalle:', err);
+        console.error('Error al añadir al carrito:', err);
         this.snackBar.open('Error al añadir al carrito.', 'Cerrar', { duration: 3000 });
       }
     });
   }
 
-  // --- Método para añadir a la lista de deseos (RECUPERADO) ---
-  addToWishlist(product: Product): void {
-    this.wishlistService.addToWishlist(product.id).subscribe({
-      next: () => {
-        this.snackBar.open(`¡"${product.titulo}" añadido a tu lista de deseos!`, 'Cerrar', { 
-          duration: 3000, 
-          panelClass: ['snackbar-success'] 
-        });
-      },
-      error: (err) => {
-        if (err.status === 403) {
-           this.snackBar.open('Debes iniciar sesión para guardar favoritos.', 'Cerrar', { duration: 4000 });
-        } else {
-           const msg = err.error || 'El libro ya está en tu lista o hubo un error.';
-           this.snackBar.open(msg, 'Cerrar', { duration: 3000 });
-        }
-      }
-    });
-  }
-
-  // --- Método de accesibilidad (Voz) (CORREGIDO) ---
   speakProductDetails(product: Product): void {
     if (!product) return;
 
     if (this.chatbotService.isSpeaking) {
       this.chatbotService.stopSpeaking();
     } else {
-      // Instancia manual para evitar el error de inyección
       const pipe = new CurrencyPipe('es-PE');
       const formattedPrice = pipe.transform(product.precio, 'S/.', 'symbol', '1.2-2');
       
