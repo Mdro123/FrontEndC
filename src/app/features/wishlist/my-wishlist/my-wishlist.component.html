@@ -13,22 +13,40 @@
   </div>
 
   <div *ngIf="!isLoading && wishlistItems.length > 0" class="wishlist-grid">
+    
     <mat-card class="wishlist-card" *ngFor="let item of wishlistItems">
-      <img mat-card-image [src]="item.imagenUrl || 'https://placehold.co/150x220'" alt="{{ item.titulo }}">
+      <img mat-card-image 
+           [src]="item.imagenUrl || 'https://placehold.co/150x220'" 
+           alt="{{ item.titulo }}"
+           [routerLink]="['/producto', item.productoId]">
+
       <mat-card-content>
         <h3 class="card-title">{{ item.titulo }}</h3>
         <p class="card-author">{{ item.autor }}</p>
         <p class="card-price">{{ item.precio | currency:'S/.':'symbol':'1.2-2' }}</p>
-        <p class="card-date">Añadido el {{ item.addedAt | date:'shortDate' }}</p>
+        <span class="card-date">Añadido el {{ item.addedAt | date:'shortDate' }}</span>
       </mat-card-content>
-      <mat-card-actions align="end">
-        <button mat-icon-button color="warn" (click)="removeItem(item.productoId)" matTooltip="Eliminar de la lista">
-          <mat-icon>delete</mat-icon>
+
+      <mat-card-actions class="wishlist-actions">
+        
+        <button mat-raised-button 
+                color="primary" 
+                class="btn-add-cart" 
+                (click)="addToCartFromWishlist(item)">
+          <mat-icon>add_shopping_cart</mat-icon>
+          <span>Añadir</span>
         </button>
-        <button mat-raised-button color="accent" (click)="addToCartFromWishlist(item)">
-          <mat-icon>add_shopping_cart</mat-icon> Mover al Carrito
+
+        <button mat-icon-button 
+                color="warn" 
+                class="action-icon-button" 
+                (click)="removeItem(item.productoId)" 
+                matTooltip="Eliminar de la lista">
+          <mat-icon>delete_outline</mat-icon>
         </button>
+        
       </mat-card-actions>
     </mat-card>
+
   </div>
 </div>
