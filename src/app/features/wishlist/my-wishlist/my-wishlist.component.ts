@@ -6,17 +6,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 import { WishlistService } from '../../../services/wishlist.service';
-import { CartService } from '../../../services/cart.service'; // Para añadir al carrito desde la lista
+import { CartService } from '../../../services/cart.service';
 import { WishlistItem } from '../../../models/wishlist.model';
-import { Product } from '../../../models/product.model'; // Necesario para convertir el ítem al añadir al carrito
 
 @Component({
   selector: 'app-my-wishlist',
   standalone: true,
   imports: [
     CommonModule, RouterLink, MatCardModule, MatButtonModule,
-    MatIconModule, MatProgressSpinnerModule, MatSnackBarModule, CurrencyPipe
+    MatIconModule, MatProgressSpinnerModule, MatSnackBarModule, 
+    CurrencyPipe, MatTooltipModule
   ],
   templateUrl: './my-wishlist.component.html',
   styleUrls: ['./my-wishlist.component.css']
@@ -49,32 +51,48 @@ export class MyWishlistComponent implements OnInit {
     });
   }
 
+  // --- Eliminar (Silencioso) ---
   removeItem(productId: number): void {
     this.wishlistService.removeFromWishlist(productId).subscribe({
       next: () => {
-        this.snackBar.open('Producto eliminado de la lista.', 'Cerrar', { duration: 3000 });
-        // Recargamos la lista localmente filtrando el ítem eliminado
+        // Actualizamos la lista visualmente
         this.wishlistItems = this.wishlistItems.filter(item => item.productoId !== productId);
+        // NO mostramos mensaje de éxito (silencioso)
       },
       error: (err) => {
-        this.snackBar.open('Error al eliminar el producto.', 'Cerrar', { duration: 3000 });
+        // SÍ mostramos mensaje si hay un error
+        console.error(err);
+        this.snackBar.open('Error al eliminar el libro.', 'Cerrar', { duration: 3000 });
       }
     });
   }
 
-  // Método auxiliar para convertir WishlistItem a Product y añadirlo al carrito
+  // --- Añadir al Carrito (Silencioso y funcional) ---
   addToCartFromWishlist(item: WishlistItem): void {
-    // Creamos un objeto parcial compatible con Product para el carrito
-    // Nota: El carrito necesita 'id', 'titulo', 'precio', 'imagenUrl', etc.
+    // Creamos un objeto compatible con Product para que el carrito lo acepte
+    // Usamos 'any' o ajustamos al modelo Product según tu proyecto
     const productMock: any = {
       id: item.productoId,
       titulo: item.titulo,
       precio: item.precio,
       imagenUrl: item.imagenUrl,
       autor: item.autor,
-      stock: 10 // Asumimos stock disponible o el backend validará al comprar
+      // Campos obligatorios que quizás no vienen en WishlistItem:
+      stock: 10, // Asumimos stock para permitir la acción
+      categoria: { nombre: 'General' },
+      sinopsis: ''
     };
 
-    this.cartService.addToCart(productMock);
+    this.cartService.addToCart(productMock).subscribe({
+      next: () => {
+        // Éxito: No mostramos mensaje (silencioso)
+        // Opcional: Si quieres que al añadir al carrito SE BORRE de la lista, descomenta esto:
+        // this.removeItem(item.productoId);
+      },
+      error: (err) => {
+        console.error('Error al añadir al carrito', err);
+        this.snackBar.open('Error al añadir al carrito.', 'Cerrar', { duration: 3000 });
+      }
+    });
   }
 }
