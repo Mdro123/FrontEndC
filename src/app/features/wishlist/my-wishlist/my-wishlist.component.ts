@@ -51,43 +51,48 @@ export class MyWishlistComponent implements OnInit {
     });
   }
 
-  // --- Eliminar (Silencioso) ---
+  // Eliminar (Silencioso)
   removeItem(productId: number): void {
     this.wishlistService.removeFromWishlist(productId).subscribe({
       next: () => {
-        // Actualizamos la lista visualmente
         this.wishlistItems = this.wishlistItems.filter(item => item.productoId !== productId);
-        // NO mostramos mensaje de éxito (silencioso)
       },
       error: (err) => {
-        // SÍ mostramos mensaje si hay un error
         console.error(err);
         this.snackBar.open('Error al eliminar el libro.', 'Cerrar', { duration: 3000 });
       }
     });
   }
 
-  // --- Añadir al Carrito (Silencioso y funcional) ---
+  // --- AÑADIR CON SCROLL Y FOCO ---
   addToCartFromWishlist(item: WishlistItem): void {
-    // Creamos un objeto compatible con Product para que el carrito lo acepte
-    // Usamos 'any' o ajustamos al modelo Product según tu proyecto
     const productMock: any = {
       id: item.productoId,
       titulo: item.titulo,
       precio: item.precio,
       imagenUrl: item.imagenUrl,
       autor: item.autor,
-      // Campos obligatorios que quizás no vienen en WishlistItem:
-      stock: 10, // Asumimos stock para permitir la acción
+      stock: 10,
       categoria: { nombre: 'General' },
       sinopsis: ''
     };
 
     this.cartService.addToCart(productMock).subscribe({
       next: () => {
-        // Éxito: No mostramos mensaje (silencioso)
-        // Opcional: Si quieres que al añadir al carrito SE BORRE de la lista, descomenta esto:
-        // this.removeItem(item.productoId);
+        // 1. Ya NO mostramos el SnackBar.
+        
+        // 2. Scroll suave hacia arriba
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // 3. Enfocar el botón del carrito
+        // Usamos un pequeño Timeout para dar tiempo a que empiece el scroll
+        setTimeout(() => {
+          // Buscamos el botón por su atributo routerLink="/carrito" que definiste en el Navbar
+          const cartButton = document.querySelector('button[routerLink="/carrito"]') as HTMLElement;
+          if (cartButton) {
+            cartButton.focus(); // Esto pone el "anillo" de selección (Tab)
+          }
+        }, 100);
       },
       error: (err) => {
         console.error('Error al añadir al carrito', err);
