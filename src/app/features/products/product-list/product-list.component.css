@@ -181,6 +181,32 @@
   width: 100%;
 }
 
+/* ... (Tus estilos anteriores se mantienen igual) ... */
+
+/* --- Estilos para la Notificación "Toast" Lateral (Fondo Blanco) --- */
+
+/* Usamos ::ng-deep porque el SnackBar se renderiza fuera del componente */
+::ng-deep .custom-cart-toast {
+  background-color: #ffffff !important; /* Fondo Blanco */
+  color: #333333 !important;            /* Texto Oscuro */
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2) !important;
+  border-radius: 8px !important;
+  border-left: 6px solid #3f51b5 !important; /* Borde lateral azul para destacar */
+  max-width: 350px !important;
+}
+
+/* Estilo para el texto dentro del mensaje */
+::ng-deep .custom-cart-toast .mat-mdc-snack-bar-label {
+  color: #333333 !important;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+/* Estilo para el botón de cerrar ('X' u 'Ok') dentro del mensaje */
+::ng-deep .custom-cart-toast .mat-mdc-snack-bar-actions .mat-mdc-snack-bar-action {
+  color: #666666 !important;
+}
+
 
 /* --- Estilos para la Cuadrícula de Productos Principal --- */
 .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
