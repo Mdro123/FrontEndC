@@ -4,6 +4,7 @@
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  min-height: 80vh; /* Asegura altura mínima para ver bien el footer */
 }
 
 h2 {
@@ -37,6 +38,7 @@ h2 {
   display: flex;
   gap: 30px;
   flex-direction: column;
+  position: relative; /* Necesario para contextos de posicionamiento */
 }
 
 .cart-items-list {
@@ -52,6 +54,7 @@ h2 {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   border-radius: 8px;
   gap: 20px;
+  background-color: white;
 }
 
 .cart-item-image {
@@ -100,13 +103,20 @@ h2 {
   text-align: right;
 }
 
-/* --- Tarjeta de Resumen --- */
+/* --- Tarjeta de Resumen (STICKY / PEGAJOSA) --- */
 .cart-summary-card {
   flex: 1;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   border-radius: 8px;
-  align-self: flex-start; /* Evita que se estire en layout de fila */
+  background-color: white;
+  
+  /* --- MAGIA STICKY AQUI --- */
+  position: sticky; 
+  position: -webkit-sticky; /* Safari */
+  top: 110px; /* Ajusta este valor según la altura de tu Navbar + Topline */
+  align-self: flex-start; /* CRUCIAL: Evita que se estire y permite el sticky */
+  z-index: 10; /* Para que no se oculte detrás de otros elementos simples */
 }
 
 .cart-summary-card h3 {
@@ -167,41 +177,66 @@ h2 {
   .cart-item-quantity-control {
     justify-content: center;
   }
+  
+  /* En móviles quitamos el sticky porque ocupa mucho espacio */
+  .cart-summary-card {
+    position: static;
+  }
 }
 
 /* ==========================================================================
-   ESTILOS PARA LA NOTIFICACIÓN DE CONFIRMACIÓN (VACIAR CARRITO)
+   ESTILOS PARA LA NOTIFICACIÓN DE CONFIRMACIÓN (CENTRADA PERFECTA)
    ==========================================================================
 */
 
-/* Fondo blanco y borde rojo para parecer alerta */
+/* Usamos ::ng-deep para saltar la encapsulación de Angular 
+   y position: fixed !important para sacarlo del flujo normal 
+   y ponerlo encima de todo (header incluido).
+*/
 ::ng-deep .confirmation-toast {
   --mdc-snackbar-container-color: #ffffff;      
-  --mdc-snackbar-supporting-text-color: #d32f2f; /* Texto rojo oscuro */
-  --mat-snack-bar-button-color: #d32f2f;         /* Botón rojo */
+  --mdc-snackbar-supporting-text-color: #d32f2f; 
+  --mat-snack-bar-button-color: #d32f2f; 
+  
+  /* Posicionamiento absoluto al centro de la pantalla */
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  
+  /* Z-index muy alto para estar encima del navbar (que suele tener 1000) */
+  z-index: 10000 !important;
+  
+  /* Reseteamos márgenes que Angular Material pone por defecto */
+  margin: 0 !important;
+  max-width: 90vw !important; /* Que no se salga en móviles */
+  width: auto !important;
 }
 
 ::ng-deep .confirmation-toast .mdc-snackbar__surface {
   background-color: #ffffff !important;
   border: 2px solid #d32f2f !important; 
-  border-radius: 8px !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2) !important;
-  justify-content: center; /* Intenta centrar contenido */
+  border-radius: 12px !important;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4) !important; /* Sombra fuerte para destacar */
+  padding: 10px !important;
+  justify-content: center;
+  min-width: 300px; /* Ancho mínimo para que se vea bien */
 }
 
 ::ng-deep .confirmation-toast .mat-mdc-snack-bar-label {
   color: #333333 !important;
   font-weight: 600 !important;
-  font-size: 1rem !important;
+  font-size: 1.1rem !important;
   text-align: center;
 }
 
 /* Botón de Acción (SÍ, VACIAR) */
 ::ng-deep .confirmation-toast .mat-mdc-snack-bar-actions .mat-mdc-snack-bar-action {
-  color: #f44336 !important; /* Rojo vivo */
+  color: #f44336 !important;
   font-weight: bold !important;
   background-color: #ffebee;
-  padding: 0 10px;
+  padding: 5px 15px;
   border-radius: 4px;
-  margin-left: 10px;
+  margin-left: 15px;
+  font-size: 1rem;
 }
