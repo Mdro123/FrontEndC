@@ -168,3 +168,40 @@ h2 {
     justify-content: center;
   }
 }
+
+/* ==========================================================================
+   ESTILOS PARA LA NOTIFICACIÓN DE CONFIRMACIÓN (VACIAR CARRITO)
+   ==========================================================================
+*/
+
+/* Fondo blanco y borde rojo para parecer alerta */
+::ng-deep .confirmation-toast {
+  --mdc-snackbar-container-color: #ffffff;      
+  --mdc-snackbar-supporting-text-color: #d32f2f; /* Texto rojo oscuro */
+  --mat-snack-bar-button-color: #d32f2f;         /* Botón rojo */
+}
+
+::ng-deep .confirmation-toast .mdc-snackbar__surface {
+  background-color: #ffffff !important;
+  border: 2px solid #d32f2f !important; 
+  border-radius: 8px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2) !important;
+  justify-content: center; /* Intenta centrar contenido */
+}
+
+::ng-deep .confirmation-toast .mat-mdc-snack-bar-label {
+  color: #333333 !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  text-align: center;
+}
+
+/* Botón de Acción (SÍ, VACIAR) */
+::ng-deep .confirmation-toast .mat-mdc-snack-bar-actions .mat-mdc-snack-bar-action {
+  color: #f44336 !important; /* Rojo vivo */
+  font-weight: bold !important;
+  background-color: #ffebee;
+  padding: 0 10px;
+  border-radius: 4px;
+  margin-left: 10px;
+}
