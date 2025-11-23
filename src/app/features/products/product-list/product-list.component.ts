@@ -16,7 +16,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { CartService } from '../../../services/cart.service';
 import { CategoryService } from '../../../services/category.service';
 import { Category } from '../../../models/category.model';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar'; // Importamos Config
 import { ChatbotService } from '../../../services/chatbot.service'; 
 
 @Component({
@@ -30,7 +30,7 @@ import { ChatbotService } from '../../../services/chatbot.service';
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
-export class ProductListComponent implements OnInit, OnDestroy { // --- AÑADIDO OnDestroy
+export class ProductListComponent implements OnInit, OnDestroy {
   products$: Observable<Product[]> | null = null;
   categories$: Observable<Category[]> | null = null;
   errorMessage: string | null = null;
@@ -38,9 +38,6 @@ export class ProductListComponent implements OnInit, OnDestroy { // --- AÑADIDO
   private searchSubject = new Subject<string>();
 
   topSellingProducts$: Observable<ProductoMasVendidoDTO[]> | null = null;
-
-  // --- AÑADIDO ---
-  // Propiedad para guardar la suscripción al texto del chatbot
   private transcriptSubscription!: Subscription;
 
   constructor(
@@ -50,7 +47,6 @@ export class ProductListComponent implements OnInit, OnDestroy { // --- AÑADIDO
     private categoryService: CategoryService,
     private router: Router,
     private snackBar: MatSnackBar,
-    // --- AÑADIDO: Inyectamos el ChatbotService y lo hacemos público ---
     public chatbotService: ChatbotService 
   ) {}
 
@@ -59,35 +55,26 @@ export class ProductListComponent implements OnInit, OnDestroy { // --- AÑADIDO
     this.setupProductLoading();
     this.setupSearch();
     this.loadTopSellingProducts();
-
-    // --- AÑADIDO: Nos suscribimos al texto reconocido por el chatbot ---
     this.subscribeToVoiceSearch();
   }
 
-  // --- AÑADIDO: Nuevo método para limpiar la suscripción ---
   ngOnDestroy(): void {
     if (this.transcriptSubscription) {
       this.transcriptSubscription.unsubscribe();
     }
   }
 
-  // --- AÑADIDO: Nuevo método para manejar la lógica de suscripción ---
   private subscribeToVoiceSearch(): void {
     this.transcriptSubscription = this.chatbotService.transcript$.subscribe(transcript => {
-      // 1. Asigna el texto reconocido a la barra de búsqueda
       this.searchTerm = transcript;
-      // 2. Llama al método que ejecuta la búsqueda
       this.onSearchTermChange();
     });
   }
 
-  // --- AÑADIDO: Nuevo método que llamará el botón del micrófono ---
   startVoiceSearch(): void {
-    // Si ya está escuchando, lo detenemos (para cancelar)
     if (this.chatbotService.isListening) {
       this.chatbotService.stopListening();
     } else {
-      // Si no, inicia la escucha
       this.chatbotService.startListening();
     }
   }
@@ -166,19 +153,33 @@ export class ProductListComponent implements OnInit, OnDestroy { // --- AÑADIDO
     this.searchSubject.next(this.searchTerm);
   }
 
-  /**
-   * Añade un producto al carrito, ahora con validación en el backend.
-   */
+  // --- MÉTODO MODIFICADO: AÑADIR AL CARRITO ---
   addToCart(product: Product): void {
-    this.cartService.addToCart(product).subscribe({
+    // 1. Llamamos al servicio con 'false' para silenciar el mensaje negro por defecto
+    this.cartService.addToCart(product, 1, false).subscribe({
       next: () => {
-        // El snackbar ya se muestra en cart.service
+        // 2. Mostramos nuestra propia notificación personalizada
+        this.showCustomNotification(product.titulo);
       },
       error: (err) => {
-        // El snackbar ya se muestra en cart.service para errores de stock/validación
-        console.error('Error al añadir producto desde ProductList:', err);
+        // En caso de error, dejamos que el servicio o un mensaje estándar avise
+        console.error('Error al añadir producto:', err);
+        this.snackBar.open('No se pudo añadir al carrito.', 'Cerrar', { duration: 3000 });
       }
     });
+  }
+
+  // Método auxiliar para configurar y mostrar el SnackBar personalizado
+  private showCustomNotification(productTitle: string): void {
+    const config: MatSnackBarConfig = {
+      duration: 3000,
+      horizontalPosition: 'right', // Derecha
+      verticalPosition: 'bottom',  // Abajo
+      panelClass: ['custom-cart-toast'] // Clase CSS definida para fondo blanco
+    };
+
+    // Mensaje con icono (usamos emoji o texto simple, ya que snackbar admite texto)
+    this.snackBar.open(`✅ "${productTitle}" añadido al carrito`, 'Cerrar', config);
   }
 
   loadTopSellingProducts(): void {
