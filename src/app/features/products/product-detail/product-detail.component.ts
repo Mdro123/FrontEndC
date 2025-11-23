@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe, registerLocaleData } from '@angular/common';
 import localeEsPe from '@angular/common/locales/es-PE';
-import { ActivatedRoute, RouterLink, Router } from '@angular/router'; // <--- 1. IMPORTAMOS ROUTER
+import { ActivatedRoute, RouterLink, Router } from '@angular/router'; 
 import { ProductService } from '../../../services/product.service';
 import { Product } from '../../../models/product.model';
 import { Observable, switchMap, of, tap, catchError } from 'rxjs';
@@ -32,7 +32,6 @@ export class ProductDetailComponent implements OnInit {
   loading: boolean = true;
   errorMessage: string | null = null;
   
-  // Estado del corazón
   isInWishlist: boolean = false;
 
   constructor(
@@ -42,7 +41,7 @@ export class ProductDetailComponent implements OnInit {
     public chatbotService: ChatbotService,
     private wishlistService: WishlistService, 
     private snackBar: MatSnackBar,
-    private router: Router // <--- 2. INYECTAMOS EL ROUTER
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -62,7 +61,6 @@ export class ProductDetailComponent implements OnInit {
         if (!product) {
           this.errorMessage = 'Libro no encontrado.';
         } else {
-          // Verificamos estado inicial
           this.checkWishlistStatus(product.id);
         }
       }),
@@ -75,7 +73,6 @@ export class ProductDetailComponent implements OnInit {
     );
   }
 
-  // --- Verificar estado ---
   checkWishlistStatus(productId: number): void {
     this.wishlistService.getMyWishlist().subscribe({
       next: (items) => {
@@ -87,10 +84,9 @@ export class ProductDetailComponent implements OnInit {
     });
   }
 
-  // --- Método Toggle MODIFICADO ---
   toggleWishlist(product: Product): void {
     if (this.isInWishlist) {
-      // CASO 1: ELIMINAR (Mantenemos comportamiento: se queda en la página)
+      // Eliminar (se queda en la misma página)
       this.wishlistService.removeFromWishlist(product.id).subscribe({
         next: () => {
           this.isInWishlist = false; 
@@ -102,12 +98,11 @@ export class ProductDetailComponent implements OnInit {
         }
       });
     } else {
-      // CASO 2: AGREGAR (Comportamiento nuevo: Redirección)
+      // Agregar (Redirecciona a la lista de deseos)
       this.wishlistService.addToWishlist(product.id).subscribe({
         next: () => {
-          // Ya no mostramos mensaje, redireccionamos directo
           this.isInWishlist = true; 
-          this.router.navigate(['/mi-lista-deseos']); // <--- REDIRECCIÓN AQUÍ
+          this.router.navigate(['/mi-lista-deseos']);
         },
         error: (err) => {
           if (err.status === 403) {
@@ -121,11 +116,17 @@ export class ProductDetailComponent implements OnInit {
     }
   }
 
+  // --- MÉTODO MODIFICADO: AÑADIR AL CARRITO ---
   addToCart(product: Product): void {
-    this.cartService.addToCart(product).subscribe({
-      next: () => {},
+    // Parámetros: Producto, Cantidad (1), MostrarMensaje (false)
+    this.cartService.addToCart(product, 1, false).subscribe({
+      next: () => {
+        // Éxito silencioso -> Redireccionar al Carrito
+        this.router.navigate(['/carrito']);
+      },
       error: (err) => {
         console.error('Error al añadir al carrito:', err);
+        // Si hay error, sí mostramos el mensaje para avisar
         this.snackBar.open('Error al añadir al carrito.', 'Cerrar', { duration: 3000 });
       }
     });
